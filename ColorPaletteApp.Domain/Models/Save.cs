@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColorPaletteApp.Domain.Models.Interactions
+namespace ColorPaletteApp.Domain.Models
 {
     public class Save
     {

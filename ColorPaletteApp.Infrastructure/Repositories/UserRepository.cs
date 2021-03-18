@@ -1,4 +1,4 @@
-﻿using ColorPaletteApp.Domain.Models.Users;
+﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -6,15 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColorPaletteApp.Infrastructure.Repositories.Users
+namespace ColorPaletteApp.Infrastructure.Repositories
 {
-    public class UserRepository : IRepository<User>
+    public class UserRepository : IUserRepository
     {
         private readonly AppDbContext dbContext;
         public UserRepository(AppDbContext context)
         {
             dbContext = context;
         }
+
         public void Add(User entity)
         {
             dbContext.Users.Add(entity);
@@ -31,17 +32,17 @@ namespace ColorPaletteApp.Infrastructure.Repositories.Users
             return dbContext.Users.ToList();
         }
 
-        public bool Remove(int id)
+        public User Remove(int id)
         {
             var dbUser = dbContext.Users.SingleOrDefault(t => t.ID == id);
-            if (dbUser == null) return false;
+            if (dbUser == null) return null;
 
             dbContext.Users.Remove(dbUser);
             dbContext.SaveChanges();
-            return true;
+            return dbUser;
         }
 
-        public void Update(User entity)
+        public User Update(User user)
         {
             throw new NotImplementedException();
         }

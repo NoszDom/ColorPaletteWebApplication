@@ -1,4 +1,4 @@
-﻿using ColorPaletteApp.Domain.Models.Interactions;
+﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColorPaletteApp.Infrastructure.Repositories.Interactions
+namespace ColorPaletteApp.Infrastructure.Repositories
 {
-    public class SaveRepository : IRepository<Save>
+    public class SaveRepository : ISaveRepository
     {
         private readonly AppDbContext dbContext;
         public SaveRepository(AppDbContext context)
@@ -31,19 +31,14 @@ namespace ColorPaletteApp.Infrastructure.Repositories.Interactions
             return dbContext.Saves.ToList();
         }
 
-        public bool Remove(int id)
+        public Save Remove(int id)
         {
             var dbSave = dbContext.Saves.SingleOrDefault(t => t.ID == id);
-            if (dbSave == null) return false;
+            if (dbSave == null) return null;
 
             dbContext.Saves.Remove(dbSave);
             dbContext.SaveChanges();
-            return true;
-        }
-
-        public void Update(Save entity)
-        {
-            throw new NotImplementedException();
+            return dbSave;
         }
     }
 }

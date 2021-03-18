@@ -1,6 +1,4 @@
-﻿using ColorPaletteApp.Domain.Models.ColorPalettes;
-using ColorPaletteApp.Domain.Models.Interactions;
-using ColorPaletteApp.Domain.Models.Users;
+﻿using ColorPaletteApp.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

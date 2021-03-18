@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColorPaletteApp.Domain.Models.ColorPalettes
+namespace ColorPaletteApp.Domain.Models
 {
-    public class ColorPalette
+    public class User
     {
         public int ID { get; set; }
         public string Name { get; set; }
-        public string Colors { get; set; }
-        public int? CreatorID { get; set; }
     }
 }

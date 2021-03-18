@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ColorPaletteApp.Infrastructure.Repositories;
+using ColorPaletteApp.Domain.Repositories;
+using ColorPaletteApp.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ColorPaletteApp.WebApi
@@ -35,8 +37,16 @@ namespace ColorPaletteApp.WebApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ColorPaletteApp.WebApi", Version = "v1" });
             });
 
+            services.AddScoped<IColorPaletteRepository, ColorPaletteRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ISaveRepository, SaveRepository>();
+
+            services.AddScoped<ColorPaletteService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<SaveService>();
+
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ColorPaletteDemo;Trusted_Connection=True;"));
+                options.UseSqlServer(Configuration.GetConnectionString("ColorPaletteDb")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

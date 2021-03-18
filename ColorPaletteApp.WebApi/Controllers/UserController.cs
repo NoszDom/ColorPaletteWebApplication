@@ -1,6 +1,7 @@
-﻿using ColorPaletteApp.Domain.Models.Users;
+﻿using ColorPaletteApp.Domain.Models;
+using ColorPaletteApp.Domain.Services;
 using ColorPaletteApp.Infrastructure.Repositories;
-using ColorPaletteApp.Infrastructure.Repositories.Users;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,45 +12,50 @@ namespace ColorPaletteApp.WebApi.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
-        private readonly AppDbContext dbContext;
-        private readonly UserRepository repository;
+        private readonly UserService service;
 
-        public UserController(AppDbContext context)
+        public UserController(UserService service)
         {
-            dbContext = context;
-            repository = new UserRepository(dbContext);
+            this.service = service;
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<User>> List()
         {
-            return Json(repository.ListAll());
+            return Ok(service.GetUsers());
         }
 
         [HttpGet]
         [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<User> GetById([FromRoute] int id)
         {
-            var dbUser = Json(repository.GetById(id));
-            if (dbUser == null) return NotFound();
-            return dbUser;
+            var result = service.GetById(id);
+            if (result == null) return NotFound();
+            else return Ok(result);
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult Add([FromBody] User user)
         {
-            repository.Add(user);
-            return Ok();
+            var result = service.Add(user);
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("{id}")]
-        public ActionResult Remove([FromRoute] int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<User> Remove([FromRoute] int id)
         {
-            bool result = repository.Remove(id);
-            if (result == false) return NotFound();
+            var result = service.Remove(id);
+            if (result == null) return NotFound();
             else return NoContent();
         }
     }

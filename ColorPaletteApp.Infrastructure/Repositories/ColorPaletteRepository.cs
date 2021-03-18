@@ -1,4 +1,4 @@
-﻿using ColorPaletteApp.Domain.Models.ColorPalettes;
+﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,14 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColorPaletteApp.Infrastructure.Repositories.ColorPalettes
+namespace ColorPaletteApp.Infrastructure.Repositories
 {
-    public class ColorPaletteRepository : IRepository<ColorPalette>
+    public class ColorPaletteRepository : IColorPaletteRepository
     {
         private readonly AppDbContext dbContext; 
         public ColorPaletteRepository(AppDbContext context) {
             dbContext = context;
         }
+
         public void Add(ColorPalette entity)
         {
             dbContext.ColorPalettes.Add(entity);
@@ -31,17 +32,17 @@ namespace ColorPaletteApp.Infrastructure.Repositories.ColorPalettes
             return dbContext.ColorPalettes.ToList();
         }
 
-        public bool Remove(int id)
+        public ColorPalette Remove(int id)
         {
             var dbPalette = dbContext.ColorPalettes.SingleOrDefault(t => t.ID == id);
-            if (dbPalette == null) return false;
+            if (dbPalette == null) return null;
 
             dbContext.ColorPalettes.Remove(dbPalette);
             dbContext.SaveChanges();
-            return true;
+            return dbPalette;
         }
 
-        public void Update(ColorPalette entity)
+        public ColorPalette Update(ColorPalette colorPalette)
         {
             throw new NotImplementedException();
         }

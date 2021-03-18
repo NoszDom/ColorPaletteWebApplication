@@ -1,6 +1,6 @@
-﻿using ColorPaletteApp.Domain.Models.Interactions;
-using ColorPaletteApp.Infrastructure.Repositories;
-using ColorPaletteApp.Infrastructure.Repositories.Interactions;
+﻿using ColorPaletteApp.Domain.Models;
+using ColorPaletteApp.Domain.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,43 +13,48 @@ namespace ColorPaletteApp.WebApi.Controllers
     [ApiController]
     public class SaveController : Controller
     {
-        private readonly AppDbContext dbContext;
-        private readonly SaveRepository repository;
+        private readonly SaveService service;
 
-        public SaveController(AppDbContext context)
+        public SaveController(SaveService service)
         {
-            dbContext = context;
-            repository = new SaveRepository(dbContext);
+            this.service = service;
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<Save>> List()
         {
-            return Json(repository.ListAll());
+            return Ok(service.GetSaves());
         }
 
         [HttpGet]
         [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Save> GetById([FromRoute] int id)
         {
-            var dbSave = Json(repository.GetById(id));
-            if (dbSave == null) return NotFound();
-            return dbSave;
+            var result = service.GetById(id);
+            if (result == null) return NotFound();
+            else return Ok(result);
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult Add([FromBody] Save save)
         {
-            repository.Add(save);
-            return Ok();
+            var result = service.Add(save);
+            return Ok(result);
         }
 
         [HttpDelete]
         [Route("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult Remove([FromRoute] int id)
         {
-            bool result = repository.Remove(id);
-            if (result == false) return NotFound();
+            var result = service.Remove(id);
+            if (result == null) return NotFound();
             else return NoContent();
         }
     }
