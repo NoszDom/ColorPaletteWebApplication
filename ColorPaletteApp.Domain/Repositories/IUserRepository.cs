@@ -8,6 +8,8 @@ namespace ColorPaletteApp.Domain.Repositories
 {
     public interface IUserRepository : IRepository<Models.User>
     {
-        public Models.User Update(Models.User user);
+        public Models.User UpdateName(int id, string newName);
+        public Models.User UpdateEmail(int id, string newEmail);
+        public Models.User UpdatePassword(int id, string newPassword);
     }
 }

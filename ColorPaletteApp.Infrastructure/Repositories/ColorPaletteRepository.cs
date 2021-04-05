@@ -32,6 +32,11 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             return dbContext.ColorPalettes.ToList();
         }
 
+        public IEnumerable<ColorPalette> ListByUser(int creatorId)
+        {
+            return dbContext.ColorPalettes.Where(t => t.CreatorID == creatorId).ToList();
+        }
+
         public ColorPalette Remove(int id)
         {
             var dbPalette = dbContext.ColorPalettes.SingleOrDefault(t => t.ID == id);
@@ -40,11 +45,6 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             dbContext.ColorPalettes.Remove(dbPalette);
             dbContext.SaveChanges();
             return dbPalette;
-        }
-
-        public ColorPalette Update(ColorPalette colorPalette)
-        {
-            throw new NotImplementedException();
         }
     }
 }

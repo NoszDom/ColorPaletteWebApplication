@@ -42,9 +42,37 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             return dbUser;
         }
 
-        public User Update(User user)
+        public User UpdateEmail(int id, string newEmail)
         {
-            throw new NotImplementedException();
+            var user = dbContext.Users.FirstOrDefault(u => u.ID == id);
+
+            if (user == null) return null;
+
+            user.Email = newEmail;
+            dbContext.SaveChanges();
+            return user;
+        }
+
+        public User UpdateName(int id, string newName)
+        {
+            var user = dbContext.Users.FirstOrDefault(u => u.ID == id);
+
+            if (user == null) return null;
+
+            user.Name = newName;
+            dbContext.SaveChanges();
+            return user;
+        }
+
+        public User UpdatePassword(int id, string newPassword)
+        {
+            var user = dbContext.Users.FirstOrDefault(u => u.ID == id);
+
+            if (user == null) return null;
+
+            user.Password = newPassword;
+            dbContext.SaveChanges();
+            return user;
         }
     }
 }

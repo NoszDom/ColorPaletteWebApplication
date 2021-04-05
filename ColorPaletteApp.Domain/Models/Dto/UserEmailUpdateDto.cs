@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ColorPaletteApp.Domain.Models
+namespace ColorPaletteApp.Domain.Models.Dto
 {
-    public class User
+    public class UserEmailUpdateDto
     {
         public int ID { get; set; }
-        public string Name { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using ColorPaletteApp.Domain.Models;
+using ColorPaletteApp.Domain.Models.Dto;
 using ColorPaletteApp.Domain.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,21 +22,33 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpGet]
+        [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ColorPalette>> List()
+        public ActionResult<IEnumerable<ColorPaletteDto>> List([FromRoute]int id, [FromQuery] int? creator)
         {
-            return Ok(service.GetColorPalettes());
+            int creatorId = creator ?? -1;
+            if (creatorId == -1) return Ok(service.GetColorPalettes(id));
+            else return Ok(service.GetPalettesByUser(id, creatorId));
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("{user}/palette/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ColorPalette> GetById([FromRoute] int id)
+        public ActionResult<ColorPaletteDto> GetById([FromRoute] int user, [FromRoute] int id)
         {
-            var result = service.GetById(id);
+            var result = service.GetById(user, id);
             if (result == null) return NotFound();
             else return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("{user}/saved")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<ColorPaletteDto> GetSavedByUser([FromRoute] int user)
+        {
+            return Ok(service.GetPalettesSavedByUser(user));
         }
 
         [HttpPost]

@@ -8,6 +8,6 @@ namespace ColorPaletteApp.Domain.Repositories
 {
     public interface IColorPaletteRepository : IRepository<Models.ColorPalette>
     {
-        public Models.ColorPalette Update(Models.ColorPalette colorPalette);
+        public IEnumerable<Models.ColorPalette> ListByUser(int creatorId);
     }
 }

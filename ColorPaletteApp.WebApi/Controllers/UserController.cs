@@ -1,4 +1,5 @@
 ﻿using ColorPaletteApp.Domain.Models;
+using ColorPaletteApp.Domain.Models.Dto;
 using ColorPaletteApp.Domain.Services;
 using ColorPaletteApp.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -23,7 +24,7 @@ namespace ColorPaletteApp.WebApi.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<User>> List()
+        public ActionResult<IEnumerable<UserDto>> List()
         {
             return Ok(service.GetUsers());
         }
@@ -32,7 +33,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<User> GetById([FromRoute] int id)
+        public ActionResult<UserDto> GetById([FromRoute] int id)
         {
             var result = service.GetById(id);
             if (result == null) return NotFound();
@@ -52,11 +53,44 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<User> Remove([FromRoute] int id)
+        public ActionResult<UserDto> Remove([FromRoute] int id)
         {
             var result = service.Remove(id);
             if (result == null) return NotFound();
             else return NoContent();
+        }
+
+        [HttpPut]
+        [Route("edit/name")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<UserDto> EditName([FromBody] UserNameUpdateDto user)
+        {
+            var result = service.UpdateName(user);
+            if (result == null) return NotFound();
+            else return Ok(result);
+        }
+
+        [HttpPut]
+        [Route("edit/email")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<UserDto> EditEmail([FromBody] UserEmailUpdateDto user)
+        {
+            var result = service.UpdateEmail(user);
+            if (result == null) return NotFound();
+            else return Ok(result);
+        }
+
+        [HttpPut]
+        [Route("edit/password")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<UserDto> EditPassword([FromBody] UserPasswordUpdateDto user)
+        {
+            var result = service.UpdatePassword(user);
+            if (result == null) return BadRequest();
+            else return Ok(result);
         }
     }
 }

@@ -8,5 +8,9 @@ namespace ColorPaletteApp.Domain.Repositories
 {
     public interface ISaveRepository : IRepository<Models.Save>
     {
+        public IEnumerable<Models.Save> ListSavesByPalette(int palettId);
+        public IEnumerable<Models.Save> ListSavesByUser(int userId);
+        public bool IsPaletteSavedByUser(int palettId, int userId);
+
     }
 }
