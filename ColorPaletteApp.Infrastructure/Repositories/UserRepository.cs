@@ -24,7 +24,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User GetById(int id)
         {
-            return dbContext.Users.SingleOrDefault(t => t.ID == id);
+            return dbContext.Users.SingleOrDefault(t => t.Id == id);
         }
 
         public IEnumerable<User> ListAll()
@@ -34,7 +34,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User Remove(int id)
         {
-            var dbUser = dbContext.Users.SingleOrDefault(t => t.ID == id);
+            var dbUser = dbContext.Users.SingleOrDefault(t => t.Id == id);
             if (dbUser == null) return null;
 
             dbContext.Users.Remove(dbUser);
@@ -44,7 +44,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User UpdateEmail(int id, string newEmail)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.ID == id);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
 
             if (user == null) return null;
 
@@ -55,7 +55,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User UpdateName(int id, string newName)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.ID == id);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
 
             if (user == null) return null;
 
@@ -66,7 +66,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User UpdatePassword(int id, string newPassword)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.ID == id);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
 
             if (user == null) return null;
 

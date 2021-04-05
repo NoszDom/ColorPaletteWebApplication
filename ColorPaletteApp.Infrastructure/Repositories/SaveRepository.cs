@@ -23,12 +23,12 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public Save GetById(int id)
         {
-            return dbContext.Saves.SingleOrDefault(t => t.ID == id);
+            return dbContext.Saves.SingleOrDefault(t => t.Id == id);
         }
 
-        public IEnumerable<Save> ListSavesByPalette(int palettId)
+        public IEnumerable<Save> ListSavesByPalette(int paletteId)
         {
-            return dbContext.Saves.Where(s => s.ColorPaletteID == palettId).ToList();
+            return dbContext.Saves.Where(s => s.ColorPaletteID == paletteId).ToList();
         }
 
         public IEnumerable<Save> ListAll()
@@ -38,7 +38,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public Save Remove(int id)
         {
-            var dbSave = dbContext.Saves.SingleOrDefault(t => t.ID == id);
+            var dbSave = dbContext.Saves.SingleOrDefault(t => t.Id == id);
             if (dbSave == null) return null;
 
             dbContext.Saves.Remove(dbSave);
@@ -51,10 +51,32 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             return dbContext.Saves.Where(s => s.UserID == userId).ToList();
         }
 
-        public bool IsPaletteSavedByUser(int palettId, int userId)
+        public bool IsPaletteSavedByUser(int paletteId, int userId)
         {
-            var result = dbContext.Saves.SingleOrDefault(s => s.UserID == userId && s.ColorPaletteID == palettId);
+            var result = dbContext.Saves.SingleOrDefault(s => s.UserID == userId && s.ColorPaletteID == paletteId);
             return (result != null);   
+        }
+
+        public void RemoveAllSavesForPalette(int paletteId)
+        {
+            var deletable = dbContext.Saves.Where(s => s.ColorPaletteID == paletteId).ToList();
+            if (deletable == null) return;
+
+            foreach (var item in deletable) {
+                dbContext.Saves.Remove(item);
+            }
+            dbContext.SaveChanges();
+            return;
+        }
+
+        public Save Remove(int paletteId, int userId)
+        {
+            var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserID == userId && s.ColorPaletteID == paletteId);
+            if (dbSave == null) return null;
+
+            dbContext.Saves.Remove(dbSave);
+            dbContext.SaveChanges();
+            return dbSave;
         }
     }
 }

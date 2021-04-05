@@ -29,13 +29,13 @@ namespace ColorPaletteApp.Domain.Services
 
             foreach (var palette in list)
             {
-                var saveCount = s_repository.ListSavesByPalette(palette.ID).Count();
-                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.ID, userId);
+                var saveCount = s_repository.ListSavesByPalette(palette.Id).Count();
+                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.Id, userId);
                 var creatorName = u_repository.GetById(palette.CreatorID).Name;
 
                 result.Add(new ColorPaletteDto()
                 {
-                    ID = palette.ID,
+                    Id = palette.Id,
                     Name = palette.Name,
                     Colors = palette.Colors,
                     CreatorId = palette.CreatorID,
@@ -53,12 +53,12 @@ namespace ColorPaletteApp.Domain.Services
             var result = new List<ColorPaletteDto>();
 
             foreach (var palette in list) {
-                var saveCount = s_repository.ListSavesByPalette(palette.ID).Count();
-                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.ID, userId);
+                var saveCount = s_repository.ListSavesByPalette(palette.Id).Count();
+                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.Id, userId);
 
                 result.Add(new ColorPaletteDto()
                 {
-                    ID = palette.ID,
+                    Id = palette.Id,
                     Name = palette.Name,
                     Colors = palette.Colors,
                     CreatorId = creatorId,
@@ -75,13 +75,13 @@ namespace ColorPaletteApp.Domain.Services
             var result = cp_repository.GetById(id);
             if (result == null) return null;
 
-            var saveCount = s_repository.ListSavesByPalette(result.ID).Count();
-            var isSavedByUser = s_repository.IsPaletteSavedByUser(result.ID, userId);
+            var saveCount = s_repository.ListSavesByPalette(result.Id).Count();
+            var isSavedByUser = s_repository.IsPaletteSavedByUser(result.Id, userId);
             var creatorName = u_repository.GetById(result.CreatorID).Name;
 
             return (new ColorPaletteDto()
             {
-                ID = result.ID,
+                Id = result.Id,
                 Name = result.Name,
                 Colors = result.Colors,
                 CreatorId = result.CreatorID,
@@ -103,13 +103,13 @@ namespace ColorPaletteApp.Domain.Services
 
             foreach (var palette in list)
             {
-                var saveCount = s_repository.ListSavesByPalette(palette.ID).Count();
-                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.ID, userId);
+                var saveCount = s_repository.ListSavesByPalette(palette.Id).Count();
+                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.Id, userId);
                 var creatorName = u_repository.GetById(palette.CreatorID).Name;
 
                 result.Add(new ColorPaletteDto()
                 {
-                    ID = palette.ID,
+                    Id = palette.Id,
                     Name = palette.Name,
                     Colors = palette.Colors,
                     CreatorId = palette.CreatorID,
@@ -129,6 +129,7 @@ namespace ColorPaletteApp.Domain.Services
 
         public ColorPalette Remove(int id)
         {
+            s_repository.RemoveAllSavesForPalette(id);
             return cp_repository.Remove(id);
         }
     }

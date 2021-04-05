@@ -8,7 +8,7 @@ namespace ColorPaletteApp.Domain.Models.Dto
 {
     public class UserEmailUpdateDto
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Email { get; set; }
     }
 }

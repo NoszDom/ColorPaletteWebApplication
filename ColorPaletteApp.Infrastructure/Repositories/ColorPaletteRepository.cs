@@ -24,7 +24,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public ColorPalette GetById(int id)
         {
-            return dbContext.ColorPalettes.SingleOrDefault(t => t.ID == id);
+            return dbContext.ColorPalettes.SingleOrDefault(t => t.Id == id);
         }
 
         public IEnumerable<ColorPalette> ListAll()
@@ -39,7 +39,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public ColorPalette Remove(int id)
         {
-            var dbPalette = dbContext.ColorPalettes.SingleOrDefault(t => t.ID == id);
+            var dbPalette = dbContext.ColorPalettes.SingleOrDefault(t => t.Id == id);
             if (dbPalette == null) return null;
 
             dbContext.ColorPalettes.Remove(dbPalette);

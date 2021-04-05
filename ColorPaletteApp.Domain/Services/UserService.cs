@@ -24,7 +24,7 @@ namespace ColorPaletteApp.Domain.Services
 
             foreach (var user in result) {
                 list.Add(new UserDto() {
-                    ID = user.ID,
+                    Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
                 });
@@ -37,7 +37,7 @@ namespace ColorPaletteApp.Domain.Services
         {
             var result = repository.GetById(id);
             if (result == null) return null;
-            else return (new UserDto() { ID = result.ID, Name = result.Name, Email = result.Email });
+            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
         public UserDto Add(User user) 
@@ -55,31 +55,31 @@ namespace ColorPaletteApp.Domain.Services
         {
            var result =  repository.Remove(id);
             if (result == null) return null;
-            else return (new UserDto() { ID = result.ID, Name = result.Name, Email = result.Email });
+            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
         public UserDto UpdateName(UserNameUpdateDto user) {
-            var result = repository.UpdateName(user.ID, user.Name);
+            var result = repository.UpdateName(user.Id, user.Name);
             if (result == null) return null;
-            else return (new UserDto() { ID = result.ID, Name = result.Name, Email = result.Email});
+            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email});
         }
 
         public UserDto UpdateEmail(UserEmailUpdateDto user)
         {
-            var result = repository.UpdateEmail(user.ID, user.Email);
+            var result = repository.UpdateEmail(user.Id, user.Email);
             if (result == null) return null;
-            else return (new UserDto() { ID = result.ID, Name = result.Name, Email = result.Email });
+            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
         public UserDto UpdatePassword(UserPasswordUpdateDto user)
         {
-            var dbUser = repository.GetById(user.ID);
+            var dbUser = repository.GetById(user.Id);
 
             if (!BCrypt.Net.BCrypt.Verify(user.OldPassword, dbUser.Password)) return null;
 
-            var result = repository.UpdatePassword(user.ID, user.NewPassword);
+            var result = repository.UpdatePassword(user.Id, BCrypt.Net.BCrypt.HashPassword(user.NewPassword));
             if (result == null) return null;
-            else return (new UserDto() { ID = result.ID, Name = result.Name, Email = result.Email });
+            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
     }
 }

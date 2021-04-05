@@ -37,5 +37,10 @@ namespace ColorPaletteApp.Domain.Services
         {
             return repository.Remove(id);
         }
+
+        public Save Remove(int userId, int paletteId)
+        {
+            return repository.Remove(userId, paletteId);
+        }
     }
 }

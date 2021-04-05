@@ -8,7 +8,7 @@ namespace ColorPaletteApp.Domain.Models.Dto
 {
     public class UserPasswordUpdateDto
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string OldPassword { get; set; }
         public string NewPassword { get; set; }
     }

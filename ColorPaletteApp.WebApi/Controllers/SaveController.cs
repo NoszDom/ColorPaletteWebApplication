@@ -57,5 +57,16 @@ namespace ColorPaletteApp.WebApi.Controllers
             if (result == null) return NotFound();
             else return NoContent();
         }
+
+        [HttpDelete]
+        [Route("{paletteId}/{userId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult Remove([FromRoute] int paletteId, [FromRoute] int userId)
+        {
+            var result = service.Remove(paletteId, userId);
+            if (result == null) return NotFound();
+            else return NoContent();
+        }
     }
 }
