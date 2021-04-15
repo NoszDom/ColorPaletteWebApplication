@@ -37,6 +37,11 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             return dbContext.ColorPalettes.Where(t => t.CreatorID == creatorId).ToList();
         }
 
+        public IEnumerable<ColorPalette> ListNotOwn(int creatorId)
+        {
+            return dbContext.ColorPalettes.Where(t => t.CreatorID != creatorId).ToList();
+        }
+
         public ColorPalette Remove(int id)
         {
             var dbPalette = dbContext.ColorPalettes.SingleOrDefault(t => t.Id == id);

@@ -42,6 +42,7 @@ namespace ColorPaletteApp.Domain.Services
 
         public UserDto Add(User user) 
         {
+            if (repository.IsEmailUsed(user.Email)) return null;
             repository.Add(new User()
             {
                 Name = user.Name,

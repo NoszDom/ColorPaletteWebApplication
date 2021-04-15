@@ -43,10 +43,11 @@ namespace ColorPaletteApp.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Add([FromBody] User user)
+        public ActionResult<UserDto> Add([FromBody] User user)
         {
             var result = service.Add(user);
-            return Ok(result);
+            if (result == null) return BadRequest();
+            else return Ok(result);
         }
 
         [HttpDelete]

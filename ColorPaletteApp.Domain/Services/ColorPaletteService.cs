@@ -24,7 +24,7 @@ namespace ColorPaletteApp.Domain.Services
 
         public IEnumerable<ColorPaletteDto> GetColorPalettes(int userId)
         {
-            var list = cp_repository.ListAll();
+            var list = cp_repository.ListNotOwn(userId);
             var result = new List<ColorPaletteDto>();
 
             foreach (var palette in list)
