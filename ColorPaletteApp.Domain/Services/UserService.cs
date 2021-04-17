@@ -47,11 +47,21 @@ namespace ColorPaletteApp.Domain.Services
         }
 
 
-        public string Login(UserLoginDto user) {
+        public LoggedInUserDto Login(UserLoginDto user) {
             var result = repository.GetUserByEmail(user.Email);
-            if (result == null) return "no_user";
+
+            var loggedInUser = new LoggedInUserDto() { User = null, Token = "" };
+
+            if (result == null) {
+                loggedInUser.Token = "no_user";
+                return loggedInUser;
+            }
             else {
-                if (!BCrypt.Net.BCrypt.Verify(user.Password, result.Password)) return "wrong_password";
+                if (!BCrypt.Net.BCrypt.Verify(user.Password, result.Password))
+                {
+                    loggedInUser.Token = "wrong_password";
+                    return loggedInUser;
+                }
                 else {
                     var jwtTokenHandler = new JwtSecurityTokenHandler();
                     var config = configuration.GetSection("TokenKey").Value;
@@ -67,7 +77,11 @@ namespace ColorPaletteApp.Domain.Services
                     };
 
                     var token = jwtTokenHandler.CreateToken(securityTokenDescriptor);
-                    return jwtTokenHandler.WriteToken(token);
+
+                    loggedInUser.User = new UserDto() {Id= result.Id,  Name = result.Name, Email = result.Email};
+                    loggedInUser.Token = jwtTokenHandler.WriteToken(token);
+
+                    return loggedInUser;
                 }
             }
         } 

@@ -54,11 +54,11 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<string> Login([FromBody] UserLoginDto user)
+        public ActionResult<LoggedInUserDto> Login([FromBody] UserLoginDto user)
         {
-            string result = service.Login(user);
+            LoggedInUserDto result = service.Login(user);
 
-            if (result == "no_user" || result == "wrong_password") return BadRequest(result);
+            if (result.Token == "no_user" || result.Token == "wrong_password") return BadRequest(result);
             else return Ok(result);
         }
 
