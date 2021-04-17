@@ -27,11 +27,9 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             return dbContext.Users.SingleOrDefault(t => t.Id == id);
         }
 
-        public bool IsEmailUsed(string email)
+        public User GetUserByEmail(string email)
         {
-            var result = dbContext.Users.SingleOrDefault(t => t.Email == email);
-            if (result == null) return false;
-            else return true;
+            return dbContext.Users.SingleOrDefault(t => t.Email == email);
         }
 
         public IEnumerable<User> ListAll()

@@ -11,6 +11,6 @@ namespace ColorPaletteApp.Domain.Repositories
         public Models.User UpdateName(int id, string newName);
         public Models.User UpdateEmail(int id, string newEmail);
         public Models.User UpdatePassword(int id, string newPassword);
-        public bool IsEmailUsed(string email);
+        public Models.User GetUserByEmail(string email);
     }
 }

@@ -6,16 +6,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace ColorPaletteApp.Domain.Services
 {
     public class UserService
     {
         private readonly IUserRepository repository;
+        private readonly IConfiguration configuration;
 
-        public UserService(IUserRepository repository)
+        public UserService(IUserRepository repository, IConfiguration configuration)
         {
             this.repository = repository;
+            this.configuration = configuration;
         }
 
         public IEnumerable<UserDto> GetUsers() {
@@ -40,9 +46,35 @@ namespace ColorPaletteApp.Domain.Services
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
+
+        public string Login(UserLoginDto user) {
+            var result = repository.GetUserByEmail(user.Email);
+            if (result == null) return "no_user";
+            else {
+                if (!BCrypt.Net.BCrypt.Verify(user.Password, result.Password)) return "wrong_password";
+                else {
+                    var jwtTokenHandler = new JwtSecurityTokenHandler();
+                    var config = configuration.GetSection("TokenKey").Value;
+                    var key = Encoding.ASCII.GetBytes(config);
+                    var securityTokenDescriptor = new SecurityTokenDescriptor() {
+                        Subject = new ClaimsIdentity(new Claim[] {
+                            new Claim(ClaimTypes.NameIdentifier, result.Id.ToString()),
+                            new Claim(ClaimTypes.Email, result.Email),
+                            new Claim(ClaimTypes.Name, result.Name),
+                        }),
+                        Expires = DateTime.Now.AddDays(1),
+                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+                    };
+
+                    var token = jwtTokenHandler.CreateToken(securityTokenDescriptor);
+                    return jwtTokenHandler.WriteToken(token);
+                }
+            }
+        } 
+
         public UserDto Add(User user) 
         {
-            if (repository.IsEmailUsed(user.Email)) return null;
+            if (repository.GetUserByEmail(user.Email) != null) return null;
             repository.Add(new User()
             {
                 Name = user.Name,

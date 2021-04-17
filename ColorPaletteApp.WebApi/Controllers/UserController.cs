@@ -50,6 +50,18 @@ namespace ColorPaletteApp.WebApi.Controllers
             else return Ok(result);
         }
 
+        [HttpPost]
+        [Route("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> Login([FromBody] UserLoginDto user)
+        {
+            string result = service.Login(user);
+
+            if (result == "no_user" || result == "wrong_password") return BadRequest(result);
+            else return Ok(result);
+        }
+
         [HttpDelete]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

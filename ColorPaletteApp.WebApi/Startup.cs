@@ -15,6 +15,9 @@ using ColorPaletteApp.Infrastructure.Repositories;
 using ColorPaletteApp.Domain.Repositories;
 using ColorPaletteApp.Domain.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ColorPaletteApp.WebApi
 {
@@ -47,6 +50,20 @@ namespace ColorPaletteApp.WebApi
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("ColorPaletteDb")));
+
+            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("TokenKey").Value);
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+                options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
 
             services.AddCors(options =>
             {
