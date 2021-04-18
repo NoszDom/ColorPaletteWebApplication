@@ -182,20 +182,20 @@ namespace ColorPaletteApp.Domain.Services
 
             switch (orderBy) {
                 case "name":
-                    sorted = list.OrderBy(o => o.Name).ToList();
+                    sorted = list.OrderBy(o => o.Name.ToLower()).ToList();
                     return sorted;
 
                 case "name-desc":
-                    sorted = list.OrderBy(o => o.Name).ToList();
+                    sorted = list.OrderBy(o => o.Name.ToLower()).ToList();
                     sorted.Reverse();
                     return sorted;
 
                 case "creator":
-                    sorted = list.OrderBy(o => o.CreatorName).ToList();
+                    sorted = list.OrderBy(o => o.CreatorName.ToLower()).ToList();
                     return sorted;
 
                 case "creator-desc":
-                    sorted = list.OrderBy(o => o.CreatorName).ToList();
+                    sorted = list.OrderBy(o => o.CreatorName.ToLower()).ToList();
                     sorted.Reverse();
                     return sorted;
 
