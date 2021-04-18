@@ -22,7 +22,7 @@ namespace ColorPaletteApp.Domain.Services
             this.s_repository = s_repository;
         }
 
-        public IEnumerable<ColorPaletteDto> GetColorPalettes(int userId)
+        public IEnumerable<ColorPaletteDto> GetColorPalettes(int userId, string orderBy, string sortBy, string sortValue)
         {
             var list = cp_repository.ListNotOwn(userId);
             var result = new List<ColorPaletteDto>();
@@ -44,10 +44,14 @@ namespace ColorPaletteApp.Domain.Services
                     SavedByCurrentUser = isSavedByUser,
                 });
             }
+
+            if (!String.IsNullOrEmpty(sortBy) && !String.IsNullOrEmpty(sortValue)) result = SortList(result, sortBy, sortValue);
+            if (!String.IsNullOrEmpty(orderBy)) result = OrderList(result, orderBy);
+
             return result;
         }
 
-        public IEnumerable<ColorPaletteDto> GetPalettesByUser(int userId, int creatorId) {
+        public IEnumerable<ColorPaletteDto> GetPalettesByUser(int userId, int creatorId, string orderBy, string sortBy, string sortValue) {
             var list = cp_repository.ListByUser(creatorId);
             var creatorName = u_repository.GetById(creatorId).Name;
             var result = new List<ColorPaletteDto>();
@@ -67,6 +71,10 @@ namespace ColorPaletteApp.Domain.Services
                     SavedByCurrentUser = isSavedByUser,
                 });
             }
+
+            if (!String.IsNullOrEmpty(sortBy) && !String.IsNullOrEmpty(sortValue)) result = SortList(result, sortBy, sortValue);
+            if (!String.IsNullOrEmpty(orderBy))result = OrderList(result, orderBy);
+
             return result;
         }
 
@@ -91,7 +99,7 @@ namespace ColorPaletteApp.Domain.Services
             });
         }
 
-        public IEnumerable<ColorPaletteDto> GetPalettesSavedByUser(int userId)
+        public IEnumerable<ColorPaletteDto> GetPalettesSavedByUser(int userId, string orderBy, string sortBy, string sortValue)
         {
             var saves = s_repository.ListSavesByUser(userId);
             var list = new List<ColorPalette>();
@@ -118,6 +126,10 @@ namespace ColorPaletteApp.Domain.Services
                     SavedByCurrentUser = isSavedByUser,
                 });
             }
+
+            if (!String.IsNullOrEmpty(sortBy) && !String.IsNullOrEmpty(sortValue)) result = SortList(result, sortBy, sortValue);
+            if (!String.IsNullOrEmpty(orderBy)) result = OrderList(result, orderBy);
+
             return result;
         }
 
@@ -131,6 +143,83 @@ namespace ColorPaletteApp.Domain.Services
         {
             s_repository.RemoveAllSavesForPalette(id);
             return cp_repository.Remove(id);
+        }
+
+        private List<ColorPaletteDto> SortList(List<ColorPaletteDto> list, string sortBy, string sortValue)
+        {
+
+            List<ColorPaletteDto> sorted = new List<ColorPaletteDto>();
+
+            switch (sortBy)
+            {
+                case "name":
+                    sorted = list.Where(s => s.Name.ToLower().Contains(sortValue.ToLower())).ToList();
+                    return sorted;
+
+                case "creator":
+                    sorted = list.Where(s => s.CreatorName.ToLower().Contains(sortValue.ToLower())).ToList();
+                    return sorted;
+
+                case "min-saves":
+                    int min = Int32.Parse(sortValue!);
+                    Console.WriteLine(min);
+                    sorted = list.Where(s => s.Saves >= min).ToList();
+                    return sorted;
+
+                case "max-saves":
+                    int max = Int32.Parse(sortValue!);
+                    sorted = list.Where(s => s.Saves <= max).ToList();
+                    return sorted;
+
+                default:
+                    return list;
+            }
+        }
+
+        private List<ColorPaletteDto> OrderList(List<ColorPaletteDto> list, string orderBy) {
+
+            List<ColorPaletteDto> sorted = new List<ColorPaletteDto>();
+
+            switch (orderBy) {
+                case "name":
+                    sorted = list.OrderBy(o => o.Name).ToList();
+                    return sorted;
+
+                case "name-desc":
+                    sorted = list.OrderBy(o => o.Name).ToList();
+                    sorted.Reverse();
+                    return sorted;
+
+                case "creator":
+                    sorted = list.OrderBy(o => o.CreatorName).ToList();
+                    return sorted;
+
+                case "creator-desc":
+                    sorted = list.OrderBy(o => o.CreatorName).ToList();
+                    sorted.Reverse();
+                    return sorted;
+
+                case "least-saves":
+                    sorted = list.OrderBy(o => o.Saves).ToList();
+                    return sorted;
+
+                case "most-saves":
+                    sorted = list.OrderBy(o => o.Saves).ToList();
+                    sorted.Reverse();
+                    return sorted;
+
+                case "new":
+                    sorted = list.OrderBy(o => o.Id).ToList();
+                    sorted.Reverse();
+                    return sorted;
+
+                case "old":
+                    sorted = list.OrderBy(o => o.Id).ToList();
+                    return sorted;
+
+                default:
+                    return list;
+            }
         }
     }
 }

@@ -22,13 +22,14 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("{user}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ColorPaletteDto>> List([FromRoute]int id, [FromQuery] int? creator)
+        public ActionResult<IEnumerable<ColorPaletteDto>> List([FromRoute]int user, [FromQuery] int? creator,
+            [FromQuery] string order, [FromQuery] string sortBy, [FromQuery] string sortValue)
         {
             int creatorId = creator ?? -1;
-            if (creatorId == -1) return Ok(service.GetColorPalettes(id));
-            else return Ok(service.GetPalettesByUser(id, creatorId));
+            if (creatorId == -1) return Ok(service.GetColorPalettes(user, order, sortBy, sortValue));
+            else return Ok(service.GetPalettesByUser(user, creatorId, order, sortBy, sortValue));
         }
 
         [HttpGet]
@@ -46,9 +47,10 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("{user}/saved")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ColorPaletteDto> GetSavedByUser([FromRoute] int user)
+        public ActionResult<ColorPaletteDto> GetSavedByUser([FromRoute] int user, [FromQuery] string order,
+            [FromQuery] string sortBy, [FromQuery] string sortValue)
         {
-            return Ok(service.GetPalettesSavedByUser(user));
+            return Ok(service.GetPalettesSavedByUser(user, order, sortBy, sortValue));
         }
 
         [HttpPost]
