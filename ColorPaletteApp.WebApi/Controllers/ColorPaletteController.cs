@@ -22,6 +22,13 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<ColorPaletteDto>> List([FromQuery] string order, [FromQuery] string sortBy, [FromQuery] string sortValue)
+        {
+          return Ok(service.GetColorPalettes(order, sortBy, sortValue));
+        }
+
+        [HttpGet]
         [Route("{user}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<ColorPaletteDto>> List([FromRoute]int user, [FromQuery] int? creator,

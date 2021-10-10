@@ -22,6 +22,34 @@ namespace ColorPaletteApp.Domain.Services
             this.s_repository = s_repository;
         }
 
+        public IEnumerable<ColorPaletteDto> GetColorPalettes(string orderBy, string sortBy, string sortValue)
+        {
+            var list = cp_repository.ListAll();
+            var result = new List<ColorPaletteDto>();
+
+            foreach (var palette in list)
+            {
+                var saveCount = s_repository.ListSavesByPalette(palette.Id).Count();
+                var creatorName = u_repository.GetById(palette.CreatorID).Name;
+
+                result.Add(new ColorPaletteDto()
+                {
+                    Id = palette.Id,
+                    Name = palette.Name,
+                    Colors = palette.Colors,
+                    CreatorId = palette.CreatorID,
+                    CreatorName = creatorName,
+                    Saves = saveCount,
+                    SavedByCurrentUser = false,
+                });
+            }
+
+            if (!String.IsNullOrEmpty(sortBy) && !String.IsNullOrEmpty(sortValue)) result = SortList(result, sortBy, sortValue);
+            if (!String.IsNullOrEmpty(orderBy)) result = OrderList(result, orderBy);
+
+            return result;
+        }
+
         public IEnumerable<ColorPaletteDto> GetColorPalettes(int userId, string orderBy, string sortBy, string sortValue)
         {
             var list = cp_repository.ListNotOwn(userId);
