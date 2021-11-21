@@ -11,6 +11,7 @@ namespace ColorPaletteApp.Domain.Models
         public User()
         {
             IsDeleted = false;
+            Saves = new List<Saves>();
         }
         public int Id { get; set; }
         public string Name { get; set; }
