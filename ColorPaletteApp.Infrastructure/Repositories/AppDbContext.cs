@@ -1,10 +1,5 @@
 ﻿using ColorPaletteApp.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ColorPaletteApp.Infrastructure.Repositories
 {
@@ -49,12 +44,14 @@ namespace ColorPaletteApp.Infrastructure.Repositories
                 .ToTable("Save")
                 .HasOne(e => e.User)
                 .WithMany(p => p.Saves)
+                .HasForeignKey(e => e.UserID)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Save>()
                 .ToTable("Save")
                 .HasOne(e => e.ColorPalette)
                 .WithMany(p => p.Saves)
+                .HasForeignKey(e => e.ColorPaletteID)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

@@ -17,7 +17,7 @@ namespace ColorPaletteApp.Domain.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public bool IsDeleted { get; set;  }
-        public virtual IEnumerable<Save> Saves { get; set; }
-        public virtual IEnumerable<ColorPalette> CreatedPalettes { get; set; }
+        public virtual IList<Save> Saves { get; set; }
+        public virtual IList<ColorPalette> CreatedPalettes { get; set; }
     }
 }
