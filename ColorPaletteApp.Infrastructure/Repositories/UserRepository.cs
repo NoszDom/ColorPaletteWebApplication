@@ -24,17 +24,17 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User GetById(int id)
         {
-            return dbContext.Users.SingleOrDefault(t => t.Id == id);
+            return dbContext.Users.SingleOrDefault(t => t.Id == id && !t.IsDeleted);
         }
 
         public User GetUserByEmail(string email)
         {
-            return dbContext.Users.SingleOrDefault(t => t.Email == email);
+            return dbContext.Users.SingleOrDefault(t => t.Email == email && !t.IsDeleted);
         }
 
         public IEnumerable<User> ListAll()
         {
-            return dbContext.Users.ToList();
+            return dbContext.Users.Where(t=> !t.IsDeleted).ToList();
         }
 
         public User Remove(int id)
@@ -42,14 +42,14 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             var dbUser = dbContext.Users.SingleOrDefault(t => t.Id == id);
             if (dbUser == null) return null;
 
-            dbContext.Users.Remove(dbUser);
+            dbUser.IsDeleted = true;
             dbContext.SaveChanges();
             return dbUser;
         }
 
         public User UpdateEmail(int id, string newEmail)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == id && !u.IsDeleted);
 
             if (user == null) return null;
 
@@ -60,7 +60,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User UpdateName(int id, string newName)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == id && !u.IsDeleted);
 
             if (user == null) return null;
 
@@ -71,7 +71,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User UpdatePassword(int id, string newPassword)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.Id == id);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == id && !u.IsDeleted);
 
             if (user == null) return null;
 

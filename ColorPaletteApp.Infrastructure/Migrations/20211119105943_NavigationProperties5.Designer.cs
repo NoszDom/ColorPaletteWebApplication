@@ -3,14 +3,16 @@ using ColorPaletteApp.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ColorPaletteApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211119105943_NavigationProperties5")]
+    partial class NavigationProperties5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,9 +33,6 @@ namespace ColorPaletteApp.Infrastructure.Migrations
                     b.Property<int>("CreatorID")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -53,9 +52,6 @@ namespace ColorPaletteApp.Infrastructure.Migrations
 
                     b.Property<int>("ColorPaletteID")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int>("UserID")
                         .HasColumnType("int");
@@ -79,9 +75,6 @@ namespace ColorPaletteApp.Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -98,7 +91,7 @@ namespace ColorPaletteApp.Infrastructure.Migrations
                     b.HasOne("ColorPaletteApp.Domain.Models.User", "Creator")
                         .WithMany("CreatedPalettes")
                         .HasForeignKey("CreatorID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Creator");
@@ -109,13 +102,13 @@ namespace ColorPaletteApp.Infrastructure.Migrations
                     b.HasOne("ColorPaletteApp.Domain.Models.ColorPalette", "ColorPalette")
                         .WithMany("Saves")
                         .HasForeignKey("ColorPaletteID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ColorPaletteApp.Domain.Models.User", "User")
                         .WithMany("Saves")
                         .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ColorPalette");

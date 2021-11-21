@@ -24,22 +24,22 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public ColorPalette GetById(int id)
         {
-            return dbContext.ColorPalettes.SingleOrDefault(t => t.Id == id);
+            return dbContext.ColorPalettes.SingleOrDefault(t => t.Id == id && !t.IsDeleted);
         }
 
         public IEnumerable<ColorPalette> ListAll()
         {
-            return dbContext.ColorPalettes.ToList();
+            return dbContext.ColorPalettes.Where(t => !t.IsDeleted).ToList();
         }
 
         public IEnumerable<ColorPalette> ListByUser(int creatorId)
         {
-            return dbContext.ColorPalettes.Where(t => t.CreatorID == creatorId).ToList();
+            return dbContext.ColorPalettes.Where(t => t.CreatorID == creatorId && !t.IsDeleted).ToList();
         }
 
         public IEnumerable<ColorPalette> ListNotOwn(int creatorId)
         {
-            return dbContext.ColorPalettes.Where(t => t.CreatorID != creatorId).ToList();
+            return dbContext.ColorPalettes.Where(t => t.CreatorID != creatorId && !t.IsDeleted).ToList();
         }
 
         public ColorPalette Remove(int id)
@@ -47,7 +47,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             var dbPalette = dbContext.ColorPalettes.SingleOrDefault(t => t.Id == id);
             if (dbPalette == null) return null;
 
-            dbContext.ColorPalettes.Remove(dbPalette);
+            dbPalette.IsDeleted = true;
             dbContext.SaveChanges();
             return dbPalette;
         }

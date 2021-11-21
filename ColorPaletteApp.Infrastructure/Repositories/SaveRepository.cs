@@ -17,23 +17,30 @@ namespace ColorPaletteApp.Infrastructure.Repositories
         }
         public void Add(Save entity)
         {
-            dbContext.Saves.Add(entity);
+            var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserID == entity.UserID && s.ColorPaletteID == entity.ColorPaletteID);
+            if (dbSave == null) {
+                dbContext.Saves.Add(entity);
+            }
+            else
+            {
+                dbSave.IsDeleted = false;
+            }
             dbContext.SaveChanges();
         }
 
         public Save GetById(int id)
         {
-            return dbContext.Saves.SingleOrDefault(t => t.Id == id);
+            return dbContext.Saves.SingleOrDefault(t => t.Id == id && !t.IsDeleted);
         }
 
         public IEnumerable<Save> ListSavesByPalette(int paletteId)
         {
-            return dbContext.Saves.Where(s => s.ColorPaletteID == paletteId).ToList();
+            return dbContext.Saves.Where(s => s.ColorPaletteID == paletteId && !s.IsDeleted).ToList();
         }
 
         public IEnumerable<Save> ListAll()
         {
-            return dbContext.Saves.ToList();
+            return dbContext.Saves.Where(s => !s.IsDeleted).ToList();
         }
 
         public Save Remove(int id)
@@ -41,19 +48,19 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             var dbSave = dbContext.Saves.SingleOrDefault(t => t.Id == id);
             if (dbSave == null) return null;
 
-            dbContext.Saves.Remove(dbSave);
+            dbSave.IsDeleted = true;
             dbContext.SaveChanges();
             return dbSave;
         }
 
         public IEnumerable<Save> ListSavesByUser(int userId)
         {
-            return dbContext.Saves.Where(s => s.UserID == userId).ToList();
+            return dbContext.Saves.Where(s => s.UserID == userId && !s.IsDeleted).ToList();
         }
 
         public bool IsPaletteSavedByUser(int paletteId, int userId)
         {
-            var result = dbContext.Saves.SingleOrDefault(s => s.UserID == userId && s.ColorPaletteID == paletteId);
+            var result = dbContext.Saves.SingleOrDefault(s => s.UserID == userId && s.ColorPaletteID == paletteId && !s.IsDeleted);
             return (result != null);   
         }
 
@@ -63,7 +70,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             if (deletable == null) return;
 
             foreach (var item in deletable) {
-                dbContext.Saves.Remove(item);
+                item.IsDeleted = true;
             }
             dbContext.SaveChanges();
             return;
@@ -74,7 +81,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserID == userId && s.ColorPaletteID == paletteId);
             if (dbSave == null) return null;
 
-            dbContext.Saves.Remove(dbSave);
+            dbSave.IsDeleted = true;
             dbContext.SaveChanges();
             return dbSave;
         }
