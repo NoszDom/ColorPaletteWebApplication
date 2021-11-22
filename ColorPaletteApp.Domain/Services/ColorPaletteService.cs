@@ -35,7 +35,7 @@ namespace ColorPaletteApp.Domain.Services
                     Id = palette.Id,
                     Name = palette.Name,
                     Colors = palette.Colors,
-                    CreatorId = palette.CreatorID,
+                    CreatorId = palette.CreatorId,
                     CreatorName = palette.Creator.Name,
                     Saves = palette.Saves.Count,
                     SavedByCurrentUser = false,
@@ -62,9 +62,9 @@ namespace ColorPaletteApp.Domain.Services
                     Id = palette.Id,
                     Name = palette.Name,
                     Colors = palette.Colors,
-                    CreatorId = palette.CreatorID,
+                    CreatorId = palette.CreatorId,
                     CreatorName = palette.Creator.Name,
-                    Saves = palette.Saves.Count,
+                    Saves = palette.Saves.Where(s => !s.IsDeleted).ToList().Count,
                     SavedByCurrentUser = isSavedByUser,
                 });
             }
@@ -91,7 +91,7 @@ namespace ColorPaletteApp.Domain.Services
                     Colors = palette.Colors,
                     CreatorId = creatorId,
                     CreatorName = creatorName,
-                    Saves = palette.Saves.Count,
+                    Saves = palette.Saves.Where(s => !s.IsDeleted).ToList().Count,
                     SavedByCurrentUser = isSavedByUser,
                 });
             }
@@ -114,9 +114,9 @@ namespace ColorPaletteApp.Domain.Services
                 Id = result.Id,
                 Name = result.Name,
                 Colors = result.Colors,
-                CreatorId = result.CreatorID,
+                CreatorId = result.CreatorId,
                 CreatorName = result.Creator.Name,
-                Saves = result.Saves.Count,
+                Saves = result.Saves.Where(s => !s.IsDeleted).ToList().Count,
                 SavedByCurrentUser = isSavedByUser,
             });
         }
@@ -128,22 +128,21 @@ namespace ColorPaletteApp.Domain.Services
             var result = new List<ColorPaletteDto>();
             
             foreach (var save in user.Saves) {
-                list.Add(save.ColorPalette);
+                if (!save.IsDeleted) list.Add(save.ColorPalette);
             }
 
             foreach (var palette in list)
             {
-                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.Id, userId);
 
                 result.Add(new ColorPaletteDto()
                 {
                     Id = palette.Id,
                     Name = palette.Name,
                     Colors = palette.Colors,
-                    CreatorId = palette.CreatorID,
+                    CreatorId = palette.CreatorId,
                     CreatorName = palette.Creator.Name,
-                    Saves = palette.Saves.Count,
-                    SavedByCurrentUser = isSavedByUser,
+                    Saves = palette.Saves.Where(s => !s.IsDeleted).ToList().Count,
+                    SavedByCurrentUser = true,
                 });
             }
 

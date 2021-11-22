@@ -1,10 +1,9 @@
 ﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Repositories;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ColorPaletteApp.Infrastructure.Repositories
 {
@@ -24,17 +23,35 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public User GetById(int id)
         {
-            return dbContext.Users.SingleOrDefault(t => t.Id == id && !t.IsDeleted);
+            return dbContext.Users
+                .Include(u => u.CreatedPalettes)
+                .Include(u => u.Saves)
+                .ThenInclude(s => s.ColorPalette)
+                .ThenInclude(cp => cp.Creator)
+                .Include(cp => cp.Saves)
+                .SingleOrDefault(t => t.Id == id && !t.IsDeleted);
         }
 
         public User GetUserByEmail(string email)
         {
-            return dbContext.Users.SingleOrDefault(t => t.Email == email && !t.IsDeleted);
+            return dbContext.Users
+                .Include(u => u.CreatedPalettes)
+                .Include(u => u.Saves)
+                .ThenInclude(s => s.ColorPalette)
+                .ThenInclude(cp => cp.Creator)
+                .Include(cp => cp.Saves)
+                .SingleOrDefault(t => t.Email == email && !t.IsDeleted);
         }
 
         public IEnumerable<User> ListAll()
         {
-            return dbContext.Users.Where(t=> !t.IsDeleted).ToList();
+            return dbContext.Users
+                .Include(u => u.CreatedPalettes)
+                .Include(u => u.Saves)
+                .ThenInclude(s => s.ColorPalette)
+                .ThenInclude(cp => cp.Creator)
+                .Include(cp => cp.Saves)
+                .Where(t=> !t.IsDeleted).ToList();
         }
 
         public User Remove(int id)

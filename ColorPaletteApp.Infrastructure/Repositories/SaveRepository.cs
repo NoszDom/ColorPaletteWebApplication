@@ -17,7 +17,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
         }
         public void Add(Save entity)
         {
-            var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserID == entity.UserID && s.ColorPaletteID == entity.ColorPaletteID);
+            var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserId == entity.UserId && s.ColorPaletteId == entity.ColorPaletteId);
             if (dbSave == null) {
                 dbContext.Saves.Add(entity);
             }
@@ -35,7 +35,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public IEnumerable<Save> ListSavesByPalette(int paletteId)
         {
-            return dbContext.Saves.Where(s => s.ColorPaletteID == paletteId && !s.IsDeleted).ToList();
+            return dbContext.Saves.Where(s => s.ColorPaletteId == paletteId && !s.IsDeleted).ToList();
         }
 
         public IEnumerable<Save> ListAll()
@@ -55,18 +55,18 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public IEnumerable<Save> ListSavesByUser(int userId)
         {
-            return dbContext.Saves.Where(s => s.UserID == userId && !s.IsDeleted).ToList();
+            return dbContext.Saves.Where(s => s.UserId == userId && !s.IsDeleted).ToList();
         }
 
         public bool IsPaletteSavedByUser(int paletteId, int userId)
         {
-            var result = dbContext.Saves.SingleOrDefault(s => s.UserID == userId && s.ColorPaletteID == paletteId && !s.IsDeleted);
+            var result = dbContext.Saves.SingleOrDefault(s => s.UserId == userId && s.ColorPaletteId == paletteId && !s.IsDeleted);
             return (result != null);   
         }
 
         public void RemoveAllSavesForPalette(int paletteId)
         {
-            var deletable = dbContext.Saves.Where(s => s.ColorPaletteID == paletteId).ToList();
+            var deletable = dbContext.Saves.Where(s => s.ColorPaletteId == paletteId).ToList();
             if (deletable == null) return;
 
             foreach (var item in deletable) {
@@ -78,7 +78,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public Save Remove(int paletteId, int userId)
         {
-            var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserID == userId && s.ColorPaletteID == paletteId);
+            var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserId == userId && s.ColorPaletteId == paletteId);
             if (dbSave == null) return null;
 
             dbSave.IsDeleted = true;

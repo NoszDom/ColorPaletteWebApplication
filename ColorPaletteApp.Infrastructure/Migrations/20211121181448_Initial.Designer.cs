@@ -30,7 +30,7 @@ namespace ColorPaletteApp.Infrastructure.Migrations
                     b.Property<string>("Colors")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CreatorID")
+                    b.Property<int>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -41,7 +41,7 @@ namespace ColorPaletteApp.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorID");
+                    b.HasIndex("CreatorId");
 
                     b.ToTable("ColorPalette");
                 });
@@ -53,20 +53,20 @@ namespace ColorPaletteApp.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ColorPaletteID")
+                    b.Property<int>("ColorPaletteId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UserID")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ColorPaletteID");
+                    b.HasIndex("ColorPaletteId");
 
-                    b.HasIndex("UserID");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Save");
                 });
@@ -99,7 +99,7 @@ namespace ColorPaletteApp.Infrastructure.Migrations
                 {
                     b.HasOne("ColorPaletteApp.Domain.Models.User", "Creator")
                         .WithMany("CreatedPalettes")
-                        .HasForeignKey("CreatorID")
+                        .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -110,13 +110,13 @@ namespace ColorPaletteApp.Infrastructure.Migrations
                 {
                     b.HasOne("ColorPaletteApp.Domain.Models.ColorPalette", "ColorPalette")
                         .WithMany("Saves")
-                        .HasForeignKey("ColorPaletteID")
+                        .HasForeignKey("ColorPaletteId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("ColorPaletteApp.Domain.Models.User", "User")
                         .WithMany("Saves")
-                        .HasForeignKey("UserID")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 

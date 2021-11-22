@@ -1,11 +1,8 @@
 ﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ColorPaletteApp.Infrastructure.Repositories
 {
@@ -24,22 +21,37 @@ namespace ColorPaletteApp.Infrastructure.Repositories
 
         public ColorPalette GetById(int id)
         {
-            return dbContext.ColorPalettes.SingleOrDefault(t => t.Id == id && !t.IsDeleted);
+            return dbContext.ColorPalettes
+                .Include(c => c.Creator)
+                .Include(c => c.Saves)
+                .SingleOrDefault(t => t.Id == id && !t.IsDeleted);
         }
 
         public IEnumerable<ColorPalette> ListAll()
         {
-            return dbContext.ColorPalettes.Where(t => !t.IsDeleted).ToList();
+            return dbContext.ColorPalettes
+                .Include(c => c.Creator)
+                .Include(c => c.Saves)
+                .Where(t => !t.IsDeleted)
+                .ToList();
         }
 
         public IEnumerable<ColorPalette> ListByUser(int creatorId)
         {
-            return dbContext.ColorPalettes.Where(t => t.CreatorID == creatorId && !t.IsDeleted).ToList();
+            return dbContext.ColorPalettes
+                .Include(c => c.Creator)
+                .Include(c => c.Saves)
+                .Where(t => t.CreatorId == creatorId && !t.IsDeleted)
+                .ToList();
         }
 
         public IEnumerable<ColorPalette> ListNotOwn(int creatorId)
         {
-            return dbContext.ColorPalettes.Where(t => t.CreatorID != creatorId && !t.IsDeleted).ToList();
+            return dbContext.ColorPalettes
+                .Include(c => c.Creator)
+                .Include(c => c.Saves)
+                .Where(t => t.CreatorId != creatorId && !t.IsDeleted)
+                .ToList();
         }
 
         public ColorPalette Remove(int id)

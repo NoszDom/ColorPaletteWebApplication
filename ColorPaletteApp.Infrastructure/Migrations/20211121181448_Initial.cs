@@ -71,17 +71,17 @@ namespace ColorPaletteApp.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ColorPalette_CreatorID",
                 table: "ColorPalette",
-                column: "CreatorID");
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Save_ColorPaletteID",
                 table: "Save",
-                column: "ColorPaletteID");
+                column: "ColorPaletteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Save_UserID",
                 table: "Save",
-                column: "UserID");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

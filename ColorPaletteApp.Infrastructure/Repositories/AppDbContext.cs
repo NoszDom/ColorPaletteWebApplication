@@ -31,7 +31,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
                 .ToTable("ColorPalette")
                 .HasOne(e => e.Creator)
                 .WithMany(p => p.CreatedPalettes)
-                .HasForeignKey(e=> e.CreatorID)
+                .HasForeignKey(e=> e.CreatorId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<ColorPalette>()
@@ -44,14 +44,14 @@ namespace ColorPaletteApp.Infrastructure.Repositories
                 .ToTable("Save")
                 .HasOne(e => e.User)
                 .WithMany(p => p.Saves)
-                .HasForeignKey(e => e.UserID)
+                .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Save>()
                 .ToTable("Save")
                 .HasOne(e => e.ColorPalette)
                 .WithMany(p => p.Saves)
-                .HasForeignKey(e => e.ColorPaletteID)
+                .HasForeignKey(e => e.ColorPaletteId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }
