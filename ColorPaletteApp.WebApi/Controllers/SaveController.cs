@@ -22,18 +22,18 @@ namespace ColorPaletteApp.WebApi.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Save>> List()
+        public async Task<ActionResult<IEnumerable<Save>>> List()
         {
-            return Ok(service.GetSaves());
+            return Ok(await service.GetSaves());
         }
 
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Save> GetById([FromRoute] int id)
+        public async Task<ActionResult<Save>> GetById([FromRoute] int id)
         {
-            var result = service.GetById(id);
+            var result = await service.GetById(id);
             if (result == null) return NotFound();
             else return Ok(result);
         }
@@ -41,9 +41,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Add([FromBody] Save save)
+        public async Task<ActionResult> Add([FromBody] Save save)
         {
-            var result = service.Add(save);
+            var result = await service.Add(save);
             return Ok(result);
         }
 
@@ -51,9 +51,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult Remove([FromRoute] int id)
+        public async Task<ActionResult> Remove([FromRoute] int id)
         {
-            var result = service.Remove(id);
+            var result = await service .Remove(id);
             if (result == null) return NotFound();
             else return NoContent();
         }
@@ -62,9 +62,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("{paletteId}/{userId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult Remove([FromRoute] int paletteId, [FromRoute] int userId)
+        public async Task<ActionResult> Remove([FromRoute] int paletteId, [FromRoute] int userId)
         {
-            var result = service.Remove(paletteId, userId);
+            var result = await service.Remove(paletteId, userId);
             if (result == null) return NotFound();
             else return NoContent();
         }

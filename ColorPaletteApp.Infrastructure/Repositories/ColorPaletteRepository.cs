@@ -3,6 +3,7 @@ using ColorPaletteApp.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ColorPaletteApp.Infrastructure.Repositories
 {
@@ -13,54 +14,54 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             dbContext = context;
         }
 
-        public void Add(ColorPalette entity)
+        public async Task Add(ColorPalette entity)
         {
             dbContext.ColorPalettes.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
-        public ColorPalette GetById(int id)
+        public async Task<ColorPalette> GetById(int id)
         {
-            return dbContext.ColorPalettes
+            return  await dbContext.ColorPalettes
                 .Include(c => c.Creator)
                 .Include(c => c.Saves)
-                .SingleOrDefault(t => t.Id == id && !t.IsDeleted);
+                .SingleOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
         }
 
-        public IEnumerable<ColorPalette> ListAll()
+        public async Task<IEnumerable<ColorPalette>> ListAll()
         {
-            return dbContext.ColorPalettes
+            return await dbContext.ColorPalettes
                 .Include(c => c.Creator)
                 .Include(c => c.Saves)
                 .Where(t => !t.IsDeleted)
-                .ToList();
+                .ToListAsync();
         }
 
-        public IEnumerable<ColorPalette> ListByUser(int creatorId)
+        public async Task<IEnumerable<ColorPalette>> ListByUser(int creatorId)
         {
-            return dbContext.ColorPalettes
+            return await dbContext.ColorPalettes
                 .Include(c => c.Creator)
                 .Include(c => c.Saves)
                 .Where(t => t.CreatorId == creatorId && !t.IsDeleted)
-                .ToList();
+                .ToListAsync();
         }
 
-        public IEnumerable<ColorPalette> ListNotOwn(int creatorId)
+        public async Task<IEnumerable<ColorPalette>> ListNotOwn(int creatorId)
         {
-            return dbContext.ColorPalettes
+            return await dbContext.ColorPalettes
                 .Include(c => c.Creator)
                 .Include(c => c.Saves)
                 .Where(t => t.CreatorId != creatorId && !t.IsDeleted)
-                .ToList();
+                .ToListAsync();
         }
 
-        public ColorPalette Remove(int id)
+        public async Task<ColorPalette> Remove(int id)
         {
-            var dbPalette = dbContext.ColorPalettes.SingleOrDefault(t => t.Id == id);
+            var dbPalette = await dbContext.ColorPalettes.SingleOrDefaultAsync(t => t.Id == id);
             if (dbPalette == null) return null;
 
             dbPalette.IsDeleted = true;
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return dbPalette;
         }
     }

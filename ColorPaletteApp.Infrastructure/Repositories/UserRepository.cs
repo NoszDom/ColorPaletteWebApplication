@@ -3,7 +3,7 @@ using ColorPaletteApp.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 
 namespace ColorPaletteApp.Infrastructure.Repositories
 {
@@ -15,85 +15,86 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             dbContext = context;
         }
 
-        public void Add(User entity)
+        public async Task Add(User entity)
         {
-            dbContext.Users.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext .Users.AddAsync(entity);
+            await dbContext .SaveChangesAsync();
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
-            return dbContext.Users
+            return await dbContext.Users
                 .Include(u => u.CreatedPalettes)
                 .Include(u => u.Saves)
                 .ThenInclude(s => s.ColorPalette)
                 .ThenInclude(cp => cp.Creator)
                 .Include(cp => cp.Saves)
-                .SingleOrDefault(t => t.Id == id && !t.IsDeleted);
+                .SingleOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
         }
 
-        public User GetUserByEmail(string email)
+        public async Task<User> GetUserByEmail(string email)
         {
-            return dbContext.Users
+            return await dbContext.Users
                 .Include(u => u.CreatedPalettes)
                 .Include(u => u.Saves)
                 .ThenInclude(s => s.ColorPalette)
                 .ThenInclude(cp => cp.Creator)
                 .Include(cp => cp.Saves)
-                .SingleOrDefault(t => t.Email == email && !t.IsDeleted);
+                .SingleOrDefaultAsync(t => t.Email == email && !t.IsDeleted);
         }
 
-        public IEnumerable<User> ListAll()
+        public async Task<IEnumerable<User>> ListAll()
         {
-            return dbContext.Users
+            return await dbContext.Users
                 .Include(u => u.CreatedPalettes)
                 .Include(u => u.Saves)
                 .ThenInclude(s => s.ColorPalette)
                 .ThenInclude(cp => cp.Creator)
                 .Include(cp => cp.Saves)
-                .Where(t=> !t.IsDeleted).ToList();
+                .Where(t=> !t.IsDeleted)
+                .ToListAsync();
         }
 
-        public User Remove(int id)
+        public async Task<User> Remove(int id)
         {
-            var dbUser = dbContext.Users.SingleOrDefault(t => t.Id == id);
+            var dbUser = await dbContext.Users.SingleOrDefaultAsync(t => t.Id == id);
             if (dbUser == null) return null;
 
             dbUser.IsDeleted = true;
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return dbUser;
         }
 
-        public User UpdateEmail(int id, string newEmail)
+        public async Task<User> UpdateEmail(int id, string newEmail)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.Id == id && !u.IsDeleted);
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
 
             if (user == null) return null;
 
             user.Email = newEmail;
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return user;
         }
 
-        public User UpdateName(int id, string newName)
+        public async Task<User> UpdateName(int id, string newName)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.Id == id && !u.IsDeleted);
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
 
             if (user == null) return null;
 
             user.Name = newName;
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return user;
         }
 
-        public User UpdatePassword(int id, string newPassword)
+        public async Task<User> UpdatePassword(int id, string newPassword)
         {
-            var user = dbContext.Users.FirstOrDefault(u => u.Id == id && !u.IsDeleted);
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
 
             if (user == null) return null;
 
             user.Password = newPassword;
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return user;
         }
     }

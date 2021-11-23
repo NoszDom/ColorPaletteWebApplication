@@ -24,8 +24,8 @@ namespace ColorPaletteApp.Domain.Services
             this.configuration = configuration;
         }
 
-        public IEnumerable<UserDto> GetUsers() {
-            var result = repository.ListAll();
+        public async Task<IEnumerable<UserDto>> GetUsers() {
+            var result = await repository.ListAll();
             var list = new List<UserDto>();
 
             foreach (var user in result) {
@@ -39,16 +39,16 @@ namespace ColorPaletteApp.Domain.Services
             return list;
         }
 
-        public UserDto GetById(int id)
+        public async Task<UserDto> GetById(int id)
         {
-            var result = repository.GetById(id);
+            var result = await repository .GetById(id);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
 
-        public LoggedInUserDto Login(UserLoginDto user) {
-            var result = repository.GetUserByEmail(user.Email);
+        public async Task<LoggedInUserDto> Login(UserLoginDto user) {
+            var result = await repository.GetUserByEmail(user.Email);
 
             var loggedInUser = new LoggedInUserDto() { User = null, Token = "" };
 
@@ -86,10 +86,10 @@ namespace ColorPaletteApp.Domain.Services
             }
         } 
 
-        public UserDto Add(User user) 
+        public async Task<UserDto> Add(User user) 
         {
-            if (repository.GetUserByEmail(user.Email) != null) return null;
-            repository.Add(new User()
+            if (await repository.GetUserByEmail(user.Email) != null) return null;
+            await repository.Add(new User()
             {
                 Name = user.Name,
                 Email = user.Email,
@@ -98,33 +98,33 @@ namespace ColorPaletteApp.Domain.Services
            return (new UserDto() { Name = user.Name, Email=user.Email,});
         }
 
-        public UserDto Remove(int id)
+        public async Task<UserDto> Remove(int id)
         {
-           var result =  repository.Remove(id);
+            var result =  await repository.Remove(id);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
-        public UserDto UpdateName(UserNameUpdateDto user) {
-            var result = repository.UpdateName(user.Id, user.Name);
+        public async Task<UserDto> UpdateName(UserNameUpdateDto user) {
+            var result = await repository .UpdateName(user.Id, user.Name);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email});
         }
 
-        public UserDto UpdateEmail(UserEmailUpdateDto user)
+        public async Task<UserDto> UpdateEmail(UserEmailUpdateDto user)
         {
-            var result = repository.UpdateEmail(user.Id, user.Email);
+            var result = await repository.UpdateEmail(user.Id, user.Email);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
-        public UserDto UpdatePassword(UserPasswordUpdateDto user)
+        public async Task<UserDto> UpdatePassword(UserPasswordUpdateDto user)
         {
-            var dbUser = repository.GetById(user.Id);
+            var dbUser = await repository.GetById(user.Id);
 
             if (!BCrypt.Net.BCrypt.Verify(user.OldPassword, dbUser.Password)) return null;
 
-            var result = repository.UpdatePassword(user.Id, BCrypt.Net.BCrypt.HashPassword(user.NewPassword));
+            var result = await repository.UpdatePassword(user.Id, BCrypt.Net.BCrypt.HashPassword(user.NewPassword));
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }

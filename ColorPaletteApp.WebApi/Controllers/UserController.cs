@@ -24,18 +24,18 @@ namespace ColorPaletteApp.WebApi.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<UserDto>> List()
+        public async Task<ActionResult<IEnumerable<UserDto>>> List()
         {
-            return Ok(service.GetUsers());
+            return Ok(await service.GetUsers());
         }
 
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserDto> GetById([FromRoute] int id)
+        public async Task<ActionResult<UserDto>> GetById([FromRoute] int id)
         {
-            var result = service.GetById(id);
+            var result = await service.GetById(id);
             if (result == null) return NotFound();
             else return Ok(result);
         }
@@ -43,9 +43,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<UserDto> Add([FromBody] User user)
+        public async Task<ActionResult<UserDto>> Add([FromBody] User user)
         {
-            var result = service.Add(user);
+            var result = await service.Add(user);
             if (result == null) return BadRequest();
             else return Ok(result);
         }
@@ -54,9 +54,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<LoggedInUserDto> Login([FromBody] UserLoginDto user)
+        public async Task<ActionResult<LoggedInUserDto>> Login([FromBody] UserLoginDto user)
         {
-            LoggedInUserDto result = service.Login(user);
+            LoggedInUserDto result = await service.Login(user);
 
             if (result.Token == "no_user" || result.Token == "wrong_password") return BadRequest(result);
             else return Ok(result);
@@ -66,9 +66,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserDto> Remove([FromRoute] int id)
+        public async Task<ActionResult<UserDto>> Remove([FromRoute] int id)
         {
-            var result = service.Remove(id);
+            var result = await service.Remove(id);
             if (result == null) return NotFound();
             else return NoContent();
         }
@@ -77,9 +77,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("edit/name")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserDto> EditName([FromBody] UserNameUpdateDto user)
+        public async Task<ActionResult<UserDto>> EditName([FromBody] UserNameUpdateDto user)
         {
-            var result = service.UpdateName(user);
+            var result = await service .UpdateName(user);
             if (result == null) return NotFound();
             else return Ok(result);
         }
@@ -88,9 +88,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("edit/email")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserDto> EditEmail([FromBody] UserEmailUpdateDto user)
+        public async Task<ActionResult<UserDto>> EditEmail([FromBody] UserEmailUpdateDto user)
         {
-            var result = service.UpdateEmail(user);
+            var result = await service.UpdateEmail(user);
             if (result == null) return NotFound();
             else return Ok(result);
         }
@@ -99,9 +99,9 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("edit/password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<UserDto> EditPassword([FromBody] UserPasswordUpdateDto user)
+        public async Task<ActionResult<UserDto>> EditPassword([FromBody] UserPasswordUpdateDto user)
         {
-            var result = service.UpdatePassword(user);
+            var result = await service.UpdatePassword(user);
             if (result == null) return BadRequest();
             else return Ok(result);
         }

@@ -22,9 +22,9 @@ namespace ColorPaletteApp.Domain.Services
             this.s_repository = s_repository;
         }
 
-        public IEnumerable<ColorPaletteDto> GetColorPalettes(string orderBy, string sortBy, string sortValue)
+        public async Task<IEnumerable<ColorPaletteDto>> GetColorPalettes(string orderBy, string sortBy, string sortValue)
         {
-            var list = cp_repository.ListAll();
+            var list = await cp_repository.ListAll();
             var result = new List<ColorPaletteDto>();
 
             foreach (var palette in list)
@@ -48,14 +48,14 @@ namespace ColorPaletteApp.Domain.Services
             return result;
         }
 
-        public IEnumerable<ColorPaletteDto> GetColorPalettes(int userId, string orderBy, string sortBy, string sortValue)
+        public async Task<IEnumerable<ColorPaletteDto>> GetColorPalettes(int userId, string orderBy, string sortBy, string sortValue)
         {
-            var list = cp_repository.ListNotOwn(userId);
+            var list = await cp_repository.ListNotOwn(userId);
             var result = new List<ColorPaletteDto>();
 
             foreach (var palette in list)
             {
-                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.Id, userId);
+                var isSavedByUser = await s_repository.IsPaletteSavedByUser(palette.Id, userId);
 
                 result.Add(new ColorPaletteDto()
                 {
@@ -75,14 +75,14 @@ namespace ColorPaletteApp.Domain.Services
             return result;
         }
 
-        public IEnumerable<ColorPaletteDto> GetPalettesByUser(int userId, int creatorId, string orderBy, string sortBy, string sortValue) {
-            var list = cp_repository.ListByUser(creatorId);
-            var creatorName = u_repository.GetById(creatorId).Name;
+        public async Task<IEnumerable<ColorPaletteDto>> GetPalettesByUser(int userId, int creatorId, string orderBy, string sortBy, string sortValue) {
+            var list = await cp_repository.ListByUser(creatorId);
+            var creatorName = (await u_repository.GetById(creatorId)).Name;
             var result = new List<ColorPaletteDto>();
 
             foreach (var palette in list) {
                
-                var isSavedByUser = s_repository.IsPaletteSavedByUser(palette.Id, userId);
+                var isSavedByUser = await s_repository.IsPaletteSavedByUser(palette.Id, userId);
 
                 result.Add(new ColorPaletteDto()
                 {
@@ -102,12 +102,12 @@ namespace ColorPaletteApp.Domain.Services
             return result;
         }
 
-        public ColorPaletteDto GetById(int userId, int id)
+        public async Task<ColorPaletteDto> GetById(int userId, int id)
         {
-            var result = cp_repository.GetById(id);
+            var result = await cp_repository.GetById(id);
             if (result == null) return null;
 
-            var isSavedByUser = s_repository.IsPaletteSavedByUser(result.Id, userId);
+            var isSavedByUser = await s_repository.IsPaletteSavedByUser(result.Id, userId);
 
             return (new ColorPaletteDto()
             {
@@ -121,9 +121,9 @@ namespace ColorPaletteApp.Domain.Services
             });
         }
 
-        public IEnumerable<ColorPaletteDto> GetPalettesSavedByUser(int userId, string orderBy, string sortBy, string sortValue)
+        public async Task<IEnumerable<ColorPaletteDto>> GetPalettesSavedByUser(int userId, string orderBy, string sortBy, string sortValue)
         {
-            var user = u_repository.GetById(userId);
+            var user = await u_repository.GetById(userId);
             var list = new List<ColorPalette>();
             var result = new List<ColorPaletteDto>();
             
@@ -133,7 +133,6 @@ namespace ColorPaletteApp.Domain.Services
 
             foreach (var palette in list)
             {
-
                 result.Add(new ColorPaletteDto()
                 {
                     Id = palette.Id,
@@ -152,16 +151,16 @@ namespace ColorPaletteApp.Domain.Services
             return result;
         }
 
-        public ColorPalette Add(ColorPalette ColorPalette)
+        public async Task<ColorPalette> Add(ColorPalette ColorPalette)
         {
-            cp_repository.Add(ColorPalette);
+            await cp_repository.Add(ColorPalette);
             return ColorPalette;
         }
 
-        public ColorPalette Remove(int id)
+        public async Task<ColorPalette> Remove(int id)
         {
-            s_repository.RemoveAllSavesForPalette(id);
-            return cp_repository.Remove(id);
+            await s_repository.RemoveAllSavesForPalette(id);
+            return await cp_repository.Remove(id);
         }
 
         private List<ColorPaletteDto> SortList(List<ColorPaletteDto> list, string sortBy, string sortValue)

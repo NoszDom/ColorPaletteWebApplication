@@ -17,30 +17,30 @@ namespace ColorPaletteApp.Domain.Services
             this.repository = repository;
         }
 
-        public IEnumerable<Save> GetSaves()
+        public async Task<IEnumerable<Save>> GetSaves()
         {
-            return repository.ListAll();
+            return await repository.ListAll();
         }
 
-        public Save GetById(int id)
+        public async Task<Save> GetById(int id)
         {
-            return repository.GetById(id);
+            return await repository.GetById(id);
         }
 
-        public Save Add(Save Save)
+        public async Task<Save> Add(Save Save)
         {
-            repository.Add(Save);
+            await repository.Add(Save);
             return Save;
         }
 
-        public Save Remove(int id)
+        public async Task<Save> Remove(int id)
         {
-            return repository.Remove(id);
+            return await repository .Remove(id);
         }
 
-        public Save Remove(int userId, int paletteId)
+        public async Task<Save> Remove(int userId, int paletteId)
         {
-            return repository.Remove(userId, paletteId);
+            return await repository.Remove(userId, paletteId);
         }
     }
 }

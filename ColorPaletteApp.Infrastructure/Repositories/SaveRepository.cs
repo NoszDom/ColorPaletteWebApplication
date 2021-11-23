@@ -1,5 +1,6 @@
 ﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,74 +16,74 @@ namespace ColorPaletteApp.Infrastructure.Repositories
         {
             dbContext = context;
         }
-        public void Add(Save entity)
+        public async Task Add(Save entity)
         {
-            var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserId == entity.UserId && s.ColorPaletteId == entity.ColorPaletteId);
+            var dbSave = await dbContext.Saves.SingleOrDefaultAsync(s => s.UserId == entity.UserId && s.ColorPaletteId == entity.ColorPaletteId);
             if (dbSave == null) {
-                dbContext.Saves.Add(entity);
+                await dbContext.Saves.AddAsync(entity);
             }
             else
             {
                 dbSave.IsDeleted = false;
             }
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
-        public Save GetById(int id)
+        public async Task<Save> GetById(int id)
         {
-            return dbContext.Saves.SingleOrDefault(t => t.Id == id && !t.IsDeleted);
+            return await dbContext.Saves.SingleOrDefaultAsync(t => t.Id == id && !t.IsDeleted);
         }
 
-        public IEnumerable<Save> ListSavesByPalette(int paletteId)
+        public async Task<IEnumerable<Save>> ListSavesByPalette(int paletteId)
         {
-            return dbContext.Saves.Where(s => s.ColorPaletteId == paletteId && !s.IsDeleted).ToList();
+            return await dbContext.Saves.Where(s => s.ColorPaletteId == paletteId && !s.IsDeleted).ToListAsync();
         }
 
-        public IEnumerable<Save> ListAll()
+        public async Task<IEnumerable<Save>> ListAll()
         {
-            return dbContext.Saves.Where(s => !s.IsDeleted).ToList();
+            return await dbContext.Saves.Where(s => !s.IsDeleted).ToListAsync();
         }
 
-        public Save Remove(int id)
+        public async Task<Save> Remove(int id)
         {
-            var dbSave = dbContext.Saves.SingleOrDefault(t => t.Id == id);
+            var dbSave = await dbContext.Saves.SingleOrDefaultAsync(t => t.Id == id);
             if (dbSave == null) return null;
 
             dbSave.IsDeleted = true;
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return dbSave;
         }
 
-        public IEnumerable<Save> ListSavesByUser(int userId)
+        public async Task<IEnumerable<Save>> ListSavesByUser(int userId)
         {
-            return dbContext.Saves.Where(s => s.UserId == userId && !s.IsDeleted).ToList();
+            return await dbContext.Saves.Where(s => s.UserId == userId && !s.IsDeleted).ToListAsync();
         }
 
-        public bool IsPaletteSavedByUser(int paletteId, int userId)
+        public async Task<bool> IsPaletteSavedByUser(int paletteId, int userId)
         {
-            var result = dbContext.Saves.SingleOrDefault(s => s.UserId == userId && s.ColorPaletteId == paletteId && !s.IsDeleted);
+            var result = await dbContext.Saves.SingleOrDefaultAsync(s => s.UserId == userId && s.ColorPaletteId == paletteId && !s.IsDeleted);
             return (result != null);   
         }
 
-        public void RemoveAllSavesForPalette(int paletteId)
+        public async Task RemoveAllSavesForPalette(int paletteId)
         {
-            var deletable = dbContext.Saves.Where(s => s.ColorPaletteId == paletteId).ToList();
+            var deletable = await dbContext.Saves.Where(s => s.ColorPaletteId == paletteId).ToListAsync();
             if (deletable == null) return;
 
             foreach (var item in deletable) {
                 item.IsDeleted = true;
             }
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return;
         }
 
-        public Save Remove(int paletteId, int userId)
+        public async Task<Save> Remove(int paletteId, int userId)
         {
-            var dbSave = dbContext.Saves.SingleOrDefault(s => s.UserId == userId && s.ColorPaletteId == paletteId);
+            var dbSave = await dbContext.Saves.SingleOrDefaultAsync(s => s.UserId == userId && s.ColorPaletteId == paletteId);
             if (dbSave == null) return null;
 
             dbSave.IsDeleted = true;
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
             return dbSave;
         }
     }
