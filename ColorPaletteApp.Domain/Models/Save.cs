@@ -15,9 +15,9 @@ namespace ColorPaletteApp.Domain.Models
 
         public int Id { get; set; }
         public bool IsDeleted { get; set; }
-        public int UserID { get; set; }
+        public int UserId { get; set; }
         public virtual User User { get; set; }
-        public int ColorPaletteID { get; set; }
+        public int ColorPaletteId { get; set; }
         public virtual ColorPalette ColorPalette{ get; set; }
     }
 }

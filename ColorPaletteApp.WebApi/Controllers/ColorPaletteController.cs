@@ -1,6 +1,7 @@
 ﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Models.Dto;
 using ColorPaletteApp.Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,29 +24,29 @@ namespace ColorPaletteApp.WebApi.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ColorPaletteDto>> List([FromQuery] string order, [FromQuery] string sortBy, [FromQuery] string sortValue)
+        public async Task<ActionResult<IEnumerable<ColorPaletteDto>>> List([FromQuery] string order, [FromQuery] string sortBy, [FromQuery] string sortValue)
         {
-          return Ok(service.GetColorPalettes(order, sortBy, sortValue));
+          return Ok(await service.GetColorPalettes(order, sortBy, sortValue));
         }
 
         [HttpGet]
         [Route("{user}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ColorPaletteDto>> List([FromRoute]int user, [FromQuery] int? creator,
+        public async Task<ActionResult<IEnumerable<ColorPaletteDto>>> List([FromRoute]int user, [FromQuery] int? creator,
             [FromQuery] string order, [FromQuery] string sortBy, [FromQuery] string sortValue)
         {
             int creatorId = creator ?? -1;
-            if (creatorId == -1) return Ok(service.GetColorPalettes(user, order, sortBy, sortValue));
-            else return Ok(service.GetPalettesByUser(user, creatorId, order, sortBy, sortValue));
+            if (creatorId == -1) return Ok(await service.GetColorPalettes(user, order, sortBy, sortValue));
+            else return Ok(await service.GetPalettesByUser(user, creatorId, order, sortBy, sortValue));
         }
 
         [HttpGet]
         [Route("{user}/palette/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ColorPaletteDto> GetById([FromRoute] int user, [FromRoute] int id)
+        public async Task<ActionResult<ColorPaletteDto>> GetById([FromRoute] int user, [FromRoute] int id)
         {
-            var result = service.GetById(user, id);
+            var result = await service.GetById(user, id);
             if (result == null) return NotFound();
             else return Ok(result);
         }
@@ -54,28 +55,31 @@ namespace ColorPaletteApp.WebApi.Controllers
         [Route("{user}/saved")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ColorPaletteDto> GetSavedByUser([FromRoute] int user, [FromQuery] string order,
+        public async Task<ActionResult<ColorPaletteDto>> GetSavedByUser([FromRoute] int user, [FromQuery] string order,
             [FromQuery] string sortBy, [FromQuery] string sortValue)
         {
-            return Ok(service.GetPalettesSavedByUser(user, order, sortBy, sortValue));
+            return Ok(await service.GetPalettesSavedByUser(user, order, sortBy, sortValue));
         }
 
+     
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult Add([FromBody] ColorPalette palette)
+        public async Task<ActionResult> Add([FromBody] CreateColorPaletteDto palette)
         {
-            var result = service.Add(palette);
-            return Ok(result);
+            var result = await service.Add(palette);
+
+            if (result == null) return BadRequest();
+            else return Ok(result);
         }
 
         [HttpDelete]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult Remove([FromRoute] int id)
+        public async Task<ActionResult> Remove([FromRoute] int id)
         {
-            var result = service.Remove(id);
+            var result = await service.Remove(id);
             if (result == null) return NotFound();
             else return NoContent();
         }

@@ -24,12 +24,15 @@ namespace ColorPaletteApp.Domain.Services
             this.configuration = configuration;
         }
 
-        public IEnumerable<UserDto> GetUsers() {
-            var result = repository.ListAll();
+        public async Task<IEnumerable<UserDto>> GetUsers()
+        {
+            var result = await repository.ListAll();
             var list = new List<UserDto>();
 
-            foreach (var user in result) {
-                list.Add(new UserDto() {
+            foreach (var user in result)
+            {
+                list.Add(new UserDto()
+                {
                     Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
@@ -39,92 +42,99 @@ namespace ColorPaletteApp.Domain.Services
             return list;
         }
 
-        public UserDto GetById(int id)
+        public async Task<UserDto> GetById(int id)
         {
-            var result = repository.GetById(id);
+            var result = await repository.GetById(id);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
 
-        public LoggedInUserDto Login(UserLoginDto user) {
-            var result = repository.GetUserByEmail(user.Email);
+        public async Task<LoggedInUserDto> Login(UserLoginDto user)
+        {
+            var result = await repository.GetUserByEmail(user.Email);
 
-            var loggedInUser = new LoggedInUserDto() { User = null, Token = "" };
-
-            if (result == null) {
-                loggedInUser.Token = "no_user";
-                return loggedInUser;
+            if (result == null)
+            {
+                return null;
             }
-            else {
+            else
+            {
                 if (!BCrypt.Net.BCrypt.Verify(user.Password, result.Password))
                 {
-                    loggedInUser.Token = "wrong_password";
-                    return loggedInUser;
+                    return null;
                 }
-                else {
-                    var jwtTokenHandler = new JwtSecurityTokenHandler();
-                    var config = configuration.GetSection("TokenKey").Value;
-                    var key = Encoding.ASCII.GetBytes(config);
-                    var securityTokenDescriptor = new SecurityTokenDescriptor() {
-                        Subject = new ClaimsIdentity(new Claim[] {
-                            new Claim(ClaimTypes.NameIdentifier, result.Id.ToString()),
-                            new Claim(ClaimTypes.Email, result.Email),
-                            new Claim(ClaimTypes.Name, result.Name),
-                        }),
-                        Expires = DateTime.Now.AddDays(1),
-                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
-                    };
-
-                    var token = jwtTokenHandler.CreateToken(securityTokenDescriptor);
-
-                    loggedInUser.User = new UserDto() {Id= result.Id,  Name = result.Name, Email = result.Email};
-                    loggedInUser.Token = jwtTokenHandler.WriteToken(token);
-
-                    return loggedInUser;
+                else
+                {
+                    return (new LoggedInUserDto()
+                    {
+                        User = new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email },
+                        Token = CreateToken(result)
+                    });
                 }
             }
-        } 
+        }
 
-        public UserDto Add(User user) 
+        private string CreateToken(User user)
         {
-            if (repository.GetUserByEmail(user.Email) != null) return null;
-            repository.Add(new User()
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var config = configuration.GetSection("TokenKey").Value;
+            var key = Encoding.ASCII.GetBytes(config);
+            var securityTokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Subject = new ClaimsIdentity(new Claim[] {
+                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Name, user.Name),
+                        }),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+            };
+
+            var token = jwtTokenHandler.CreateToken(securityTokenDescriptor);
+            return jwtTokenHandler.WriteToken(token);
+        }
+
+        public async Task<UserDto> Add(RegisterUserDto user)
+        {
+            if (await repository.GetUserByEmail(user.Email) != null) return null;
+            await repository.Add(new User()
             {
                 Name = user.Name,
                 Email = user.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(user.Password),
-            }) ;
-           return (new UserDto() { Name = user.Name, Email=user.Email,});
+            });
+            return (new UserDto() { Name = user.Name, Email = user.Email, });
         }
 
-        public UserDto Remove(int id)
+        public async Task<UserDto> Remove(int id)
         {
-           var result =  repository.Remove(id);
+            var result = await repository.Remove(id);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
-        public UserDto UpdateName(UserNameUpdateDto user) {
-            var result = repository.UpdateName(user.Id, user.Name);
-            if (result == null) return null;
-            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email});
-        }
-
-        public UserDto UpdateEmail(UserEmailUpdateDto user)
+        public async Task<UserDto> UpdateName(UserNameUpdateDto user)
         {
-            var result = repository.UpdateEmail(user.Id, user.Email);
+            var result = await repository.UpdateName(user.Id, user.Name);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
-        public UserDto UpdatePassword(UserPasswordUpdateDto user)
+        public async Task<UserDto> UpdateEmail(UserEmailUpdateDto user)
         {
-            var dbUser = repository.GetById(user.Id);
+            var result = await repository.UpdateEmail(user.Id, user.Email);
+            if (result == null) return null;
+            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
+        }
+
+        public async Task<UserDto> UpdatePassword(UserPasswordUpdateDto user)
+        {
+            var dbUser = await repository.GetById(user.Id);
 
             if (!BCrypt.Net.BCrypt.Verify(user.OldPassword, dbUser.Password)) return null;
 
-            var result = repository.UpdatePassword(user.Id, BCrypt.Net.BCrypt.HashPassword(user.NewPassword));
+            var result = await repository.UpdatePassword(user.Id, BCrypt.Net.BCrypt.HashPassword(user.NewPassword));
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }

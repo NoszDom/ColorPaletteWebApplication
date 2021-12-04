@@ -16,8 +16,8 @@ namespace ColorPaletteApp.Domain.Models
         public string Name { get; set; }
         public string Colors { get; set; }
         public bool IsDeleted { get; set; }
-        public int CreatorID { get; set; }
+        public int CreatorId { get; set; }
         public virtual User Creator { get; set; }
-        public virtual IList<Save> Saves { get; set; }
+        public virtual List<Save> Saves { get; set; }
     }
 }

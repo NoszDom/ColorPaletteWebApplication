@@ -8,9 +8,9 @@ namespace ColorPaletteApp.Domain.Repositories
 {
     public interface IRepository<T> where T : class
     {
-        public T GetById(int id);
-        public IEnumerable<T> ListAll();
-        public void Add(T entity);
-        public T Remove(int id);
+        public Task<T> GetById(int id);
+        public Task<IEnumerable<T>> ListAll();
+        public Task<bool> Add(T entity);
+        public Task<T> Remove(int id);
     }
 }

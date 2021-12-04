@@ -8,7 +8,7 @@ namespace ColorPaletteApp.Domain.Repositories
 {
     public interface IColorPaletteRepository : IRepository<Models.ColorPalette>
     {
-        public IEnumerable<Models.ColorPalette> ListByUser(int creatorId);
-        public IEnumerable<Models.ColorPalette> ListNotOwn(int creatorId);
+        public Task<IEnumerable<Models.ColorPalette>> ListByUser(int creatorId);
+        public Task<IEnumerable<Models.ColorPalette>> ListNotOwn(int creatorId);
     }
 }

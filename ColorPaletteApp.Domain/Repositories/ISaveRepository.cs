@@ -8,10 +8,10 @@ namespace ColorPaletteApp.Domain.Repositories
 {
     public interface ISaveRepository : IRepository<Models.Save>
     {
-        public IEnumerable<Models.Save> ListSavesByPalette(int paletteId);
-        public IEnumerable<Models.Save> ListSavesByUser(int userId);
-        public bool IsPaletteSavedByUser(int paletteId, int userId);
-        public void RemoveAllSavesForPalette(int paletteId);
-        public Models.Save Remove(int paletteId, int userId);
+        public Task<IEnumerable<Models.Save>> ListSavesByPalette(int paletteId);
+        public Task<IEnumerable<Models.Save>> ListSavesByUser(int userId);
+        public Task<bool> IsPaletteSavedByUser(int paletteId, int userId);
+        public Task RemoveAllSavesForPalette(int paletteId);
+        public Task<Models.Save> Remove(int paletteId, int userId);
     }
 }
