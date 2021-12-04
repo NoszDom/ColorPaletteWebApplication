@@ -1,5 +1,6 @@
 ﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,7 @@ namespace ColorPaletteApp.WebApi.Controllers
 {
     [Route("api/saves")]
     [ApiController]
+    [Authorize]
     public class SaveController : Controller
     {
         private readonly SaveService service;

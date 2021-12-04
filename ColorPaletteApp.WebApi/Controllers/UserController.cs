@@ -2,6 +2,7 @@
 using ColorPaletteApp.Domain.Models.Dto;
 using ColorPaletteApp.Domain.Services;
 using ColorPaletteApp.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,6 +24,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<UserDto>>> List()
         {
@@ -30,6 +32,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -67,6 +70,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -78,6 +82,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("edit/name")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -89,6 +94,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("edit/email")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -100,6 +106,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("edit/password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

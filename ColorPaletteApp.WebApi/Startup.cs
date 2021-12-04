@@ -61,10 +61,10 @@ namespace ColorPaletteApp.WebApi
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(key),
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        ValidateLifetime = true
                     };
                 });
-
 
             services.AddCors(options =>
             {
@@ -86,12 +86,14 @@ namespace ColorPaletteApp.WebApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ColorPaletteApp.WebApi v1"));
             }
 
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

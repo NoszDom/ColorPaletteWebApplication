@@ -1,6 +1,7 @@
 ﻿using ColorPaletteApp.Domain.Models;
 using ColorPaletteApp.Domain.Models.Dto;
 using ColorPaletteApp.Domain.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{user}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<ColorPaletteDto>>> List([FromRoute]int user, [FromQuery] int? creator,
@@ -41,6 +43,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{user}/palette/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,6 +55,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{user}/saved")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -63,6 +67,7 @@ namespace ColorPaletteApp.WebApi.Controllers
 
      
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Add([FromBody] CreateColorPaletteDto palette)
@@ -74,6 +79,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
