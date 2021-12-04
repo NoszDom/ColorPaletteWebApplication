@@ -44,7 +44,8 @@ namespace ColorPaletteApp.WebApi.Controllers
         public async Task<ActionResult> Add([FromBody] Save save)
         {
             var result = await service.Add(save);
-            return Ok(result);
+            if (result == null) return BadRequest();
+            else return Ok(result);
         }
 
         [HttpDelete]

@@ -52,10 +52,11 @@ namespace ColorPaletteApp.WebApi
                 options.UseSqlServer(Configuration.GetConnectionString("ColorPaletteDb")));
 
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("TokenKey").Value);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 options =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(key),

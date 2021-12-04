@@ -28,8 +28,7 @@ namespace ColorPaletteApp.Domain.Services
             var result = new List<ColorPaletteDto>();
 
             foreach (var palette in list)
-            {          
-
+            { 
                 result.Add(new ColorPaletteDto()
                 {
                     Id = palette.Id,
@@ -75,13 +74,15 @@ namespace ColorPaletteApp.Domain.Services
             return result;
         }
 
-        public async Task<IEnumerable<ColorPaletteDto>> GetPalettesByUser(int userId, int creatorId, string orderBy, string sortBy, string sortValue) {
+        public async Task<IEnumerable<ColorPaletteDto>> GetPalettesByUser(int userId, int creatorId, string orderBy, string sortBy, string sortValue)
+        {
             var list = await cp_repository.ListByUser(creatorId);
             var creatorName = (await u_repository.GetById(creatorId)).Name;
             var result = new List<ColorPaletteDto>();
 
-            foreach (var palette in list) {
-               
+            foreach (var palette in list)
+            {
+
                 var isSavedByUser = await s_repository.IsPaletteSavedByUser(palette.Id, userId);
 
                 result.Add(new ColorPaletteDto()
@@ -97,7 +98,7 @@ namespace ColorPaletteApp.Domain.Services
             }
 
             if (!String.IsNullOrEmpty(sortBy) && !String.IsNullOrEmpty(sortValue)) result = SortList(result, sortBy, sortValue);
-            if (!String.IsNullOrEmpty(orderBy))result = OrderList(result, orderBy);
+            if (!String.IsNullOrEmpty(orderBy)) result = OrderList(result, orderBy);
 
             return result;
         }
@@ -126,8 +127,9 @@ namespace ColorPaletteApp.Domain.Services
             var user = await u_repository.GetById(userId);
             var list = new List<ColorPalette>();
             var result = new List<ColorPaletteDto>();
-            
-            foreach (var save in user.Saves) {
+
+            foreach (var save in user.Saves)
+            {
                 if (!save.IsDeleted) list.Add(save.ColorPalette);
             }
 
@@ -151,10 +153,18 @@ namespace ColorPaletteApp.Domain.Services
             return result;
         }
 
-        public async Task<ColorPalette> Add(ColorPalette ColorPalette)
+        public async Task<ColorPalette> Add(CreateColorPaletteDto colorPalette)
         {
-            await cp_repository.Add(ColorPalette);
-            return ColorPalette;
+            var palette = new ColorPalette()
+            {
+                Name = colorPalette.Name,
+                Colors = colorPalette.Colors,
+                CreatorId = colorPalette.CreatorId
+            };
+
+            var result = await cp_repository.Add(palette);
+            if (result) return palette;
+            else return null;
         }
 
         public async Task<ColorPalette> Remove(int id)
@@ -194,46 +204,48 @@ namespace ColorPaletteApp.Domain.Services
             }
         }
 
-        private List<ColorPaletteDto> OrderList(List<ColorPaletteDto> list, string orderBy) {
+        private List<ColorPaletteDto> OrderList(List<ColorPaletteDto> list, string orderBy)
+        {
 
-            List<ColorPaletteDto> sorted = new List<ColorPaletteDto>();
+            List<ColorPaletteDto> ordered = new List<ColorPaletteDto>();
 
-            switch (orderBy) {
+            switch (orderBy)
+            {
                 case "name":
-                    sorted = list.OrderBy(o => o.Name.ToLower()).ToList();
-                    return sorted;
+                    ordered = list.OrderBy(o => o.Name.ToLower()).ToList();
+                    return ordered;
 
                 case "name-desc":
-                    sorted = list.OrderBy(o => o.Name.ToLower()).ToList();
-                    sorted.Reverse();
-                    return sorted;
+                    ordered = list.OrderBy(o => o.Name.ToLower()).ToList();
+                    ordered.Reverse();
+                    return ordered;
 
                 case "creator":
-                    sorted = list.OrderBy(o => o.CreatorName.ToLower()).ToList();
-                    return sorted;
+                    ordered = list.OrderBy(o => o.CreatorName.ToLower()).ToList();
+                    return ordered;
 
                 case "creator-desc":
-                    sorted = list.OrderBy(o => o.CreatorName.ToLower()).ToList();
-                    sorted.Reverse();
-                    return sorted;
+                    ordered = list.OrderBy(o => o.CreatorName.ToLower()).ToList();
+                    ordered.Reverse();
+                    return ordered;
 
                 case "least-saves":
-                    sorted = list.OrderBy(o => o.Saves).ToList();
-                    return sorted;
+                    ordered = list.OrderBy(o => o.Saves).ToList();
+                    return ordered;
 
                 case "most-saves":
-                    sorted = list.OrderBy(o => o.Saves).ToList();
-                    sorted.Reverse();
-                    return sorted;
+                    ordered = list.OrderBy(o => o.Saves).ToList();
+                    ordered.Reverse();
+                    return ordered;
 
                 case "new":
-                    sorted = list.OrderBy(o => o.Id).ToList();
-                    sorted.Reverse();
-                    return sorted;
+                    ordered = list.OrderBy(o => o.Id).ToList();
+                    ordered.Reverse();
+                    return ordered;
 
                 case "old":
-                    sorted = list.OrderBy(o => o.Id).ToList();
-                    return sorted;
+                    ordered = list.OrderBy(o => o.Id).ToList();
+                    return ordered;
 
                 default:
                     return list;

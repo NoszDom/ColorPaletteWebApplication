@@ -43,8 +43,12 @@ namespace ColorPaletteApp.WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<UserDto>> Add([FromBody] User user)
+        public async Task<ActionResult<UserDto>> Add([FromBody] RegisterUserDto user)
         {
+            if (String.IsNullOrEmpty(user.Name) || 
+                String.IsNullOrEmpty(user.Name) || 
+                String.IsNullOrEmpty(user.Password)) return BadRequest();
+
             var result = await service.Add(user);
             if (result == null) return BadRequest();
             else return Ok(result);
@@ -58,7 +62,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         {
             LoggedInUserDto result = await service.Login(user);
 
-            if (result.Token == "no_user" || result.Token == "wrong_password") return BadRequest(result);
+            if (result == null) return BadRequest(result);
             else return Ok(result);
         }
 
@@ -79,7 +83,7 @@ namespace ColorPaletteApp.WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<UserDto>> EditName([FromBody] UserNameUpdateDto user)
         {
-            var result = await service .UpdateName(user);
+            var result = await service.UpdateName(user);
             if (result == null) return NotFound();
             else return Ok(result);
         }

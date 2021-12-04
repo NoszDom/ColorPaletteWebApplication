@@ -61,13 +61,16 @@ namespace ColorPaletteApp.WebApi.Controllers
             return Ok(await service.GetPalettesSavedByUser(user, order, sortBy, sortValue));
         }
 
-        [Authorize]
+     
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Add([FromBody] ColorPalette palette)
+        public async Task<ActionResult> Add([FromBody] CreateColorPaletteDto palette)
         {
-            return Ok(await service.Add(palette));
+            var result = await service.Add(palette);
+
+            if (result == null) return BadRequest();
+            else return Ok(result);
         }
 
         [HttpDelete]

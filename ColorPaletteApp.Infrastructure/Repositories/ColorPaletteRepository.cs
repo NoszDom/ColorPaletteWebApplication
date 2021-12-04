@@ -14,10 +14,11 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             dbContext = context;
         }
 
-        public async Task Add(ColorPalette entity)
+        public async Task<bool> Add(ColorPalette entity)
         {
-            dbContext.ColorPalettes.Add(entity);
-            await dbContext.SaveChangesAsync();
+            await dbContext.ColorPalettes.AddAsync(entity);
+            var result = await dbContext.SaveChangesAsync();
+            return result != 0;
         }
 
         public async Task<ColorPalette> GetById(int id)

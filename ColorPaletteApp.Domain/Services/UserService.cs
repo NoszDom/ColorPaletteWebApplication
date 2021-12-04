@@ -24,12 +24,15 @@ namespace ColorPaletteApp.Domain.Services
             this.configuration = configuration;
         }
 
-        public async Task<IEnumerable<UserDto>> GetUsers() {
+        public async Task<IEnumerable<UserDto>> GetUsers()
+        {
             var result = await repository.ListAll();
             var list = new List<UserDto>();
 
-            foreach (var user in result) {
-                list.Add(new UserDto() {
+            foreach (var user in result)
+            {
+                list.Add(new UserDto()
+                {
                     Id = user.Id,
                     Name = user.Name,
                     Email = user.Email,
@@ -41,52 +44,58 @@ namespace ColorPaletteApp.Domain.Services
 
         public async Task<UserDto> GetById(int id)
         {
-            var result = await repository .GetById(id);
+            var result = await repository.GetById(id);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
 
-        public async Task<LoggedInUserDto> Login(UserLoginDto user) {
+        public async Task<LoggedInUserDto> Login(UserLoginDto user)
+        {
             var result = await repository.GetUserByEmail(user.Email);
 
-            var loggedInUser = new LoggedInUserDto() { User = null, Token = "" };
-
-            if (result == null) {
-                loggedInUser.Token = "no_user";
-                return loggedInUser;
+            if (result == null)
+            {
+                return null;
             }
-            else {
+            else
+            {
                 if (!BCrypt.Net.BCrypt.Verify(user.Password, result.Password))
                 {
-                    loggedInUser.Token = "wrong_password";
-                    return loggedInUser;
+                    return null;
                 }
-                else {
-                    var jwtTokenHandler = new JwtSecurityTokenHandler();
-                    var config = configuration.GetSection("TokenKey").Value;
-                    var key = Encoding.ASCII.GetBytes(config);
-                    var securityTokenDescriptor = new SecurityTokenDescriptor() {
-                        Subject = new ClaimsIdentity(new Claim[] {
-                            new Claim(ClaimTypes.NameIdentifier, result.Id.ToString()),
-                            new Claim(ClaimTypes.Email, result.Email),
-                            new Claim(ClaimTypes.Name, result.Name),
-                        }),
-                        Expires = DateTime.Now.AddDays(1),
-                        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
-                    };
-
-                    var token = jwtTokenHandler.CreateToken(securityTokenDescriptor);
-
-                    loggedInUser.User = new UserDto() {Id= result.Id,  Name = result.Name, Email = result.Email};
-                    loggedInUser.Token = jwtTokenHandler.WriteToken(token);
-
-                    return loggedInUser;
+                else
+                {
+                    return (new LoggedInUserDto()
+                    {
+                        User = new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email },
+                        Token = CreateToken(result)
+                    });
                 }
             }
-        } 
+        }
 
-        public async Task<UserDto> Add(User user) 
+        private string CreateToken(User user)
+        {
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var config = configuration.GetSection("TokenKey").Value;
+            var key = Encoding.ASCII.GetBytes(config);
+            var securityTokenDescriptor = new SecurityTokenDescriptor()
+            {
+                Subject = new ClaimsIdentity(new Claim[] {
+                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Name, user.Name),
+                        }),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+            };
+
+            var token = jwtTokenHandler.CreateToken(securityTokenDescriptor);
+            return jwtTokenHandler.WriteToken(token);
+        }
+
+        public async Task<UserDto> Add(RegisterUserDto user)
         {
             if (await repository.GetUserByEmail(user.Email) != null) return null;
             await repository.Add(new User()
@@ -94,21 +103,22 @@ namespace ColorPaletteApp.Domain.Services
                 Name = user.Name,
                 Email = user.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(user.Password),
-            }) ;
-           return (new UserDto() { Name = user.Name, Email=user.Email,});
+            });
+            return (new UserDto() { Name = user.Name, Email = user.Email, });
         }
 
         public async Task<UserDto> Remove(int id)
         {
-            var result =  await repository.Remove(id);
+            var result = await repository.Remove(id);
             if (result == null) return null;
             else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
-        public async Task<UserDto> UpdateName(UserNameUpdateDto user) {
-            var result = await repository .UpdateName(user.Id, user.Name);
+        public async Task<UserDto> UpdateName(UserNameUpdateDto user)
+        {
+            var result = await repository.UpdateName(user.Id, user.Name);
             if (result == null) return null;
-            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email});
+            else return (new UserDto() { Id = result.Id, Name = result.Name, Email = result.Email });
         }
 
         public async Task<UserDto> UpdateEmail(UserEmailUpdateDto user)

@@ -27,10 +27,11 @@ namespace ColorPaletteApp.Domain.Services
             return await repository.GetById(id);
         }
 
-        public async Task<Save> Add(Save Save)
+        public async Task<Save> Add(Save save)
         {
-            await repository.Add(Save);
-            return Save;
+            var result = await repository.Add(save);
+            if (result) return save;
+            else return null;
         }
 
         public async Task<Save> Remove(int id)

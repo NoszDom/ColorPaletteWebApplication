@@ -10,7 +10,7 @@ namespace ColorPaletteApp.Domain.Repositories
     {
         public Task<T> GetById(int id);
         public Task<IEnumerable<T>> ListAll();
-        public Task Add(T entity);
+        public Task<bool> Add(T entity);
         public Task<T> Remove(int id);
     }
 }

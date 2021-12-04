@@ -16,7 +16,7 @@ namespace ColorPaletteApp.Infrastructure.Repositories
         {
             dbContext = context;
         }
-        public async Task Add(Save entity)
+        public async Task<bool> Add(Save entity)
         {
             var dbSave = await dbContext.Saves.SingleOrDefaultAsync(s => s.UserId == entity.UserId && s.ColorPaletteId == entity.ColorPaletteId);
             if (dbSave == null) {
@@ -26,7 +26,8 @@ namespace ColorPaletteApp.Infrastructure.Repositories
             {
                 dbSave.IsDeleted = false;
             }
-            await dbContext.SaveChangesAsync();
+            var result = await dbContext.SaveChangesAsync();
+            return result != 0;
         }
 
         public async Task<Save> GetById(int id)
